@@ -128,12 +128,12 @@ body {
 .toggle-btn {
     position: relative;
     z-index: 2; 
-    background: #f4f4f9; /* Matches body background to blend in */
+    background: #b3daff; /* Matches body background to blend in */
     padding: 0 2px;
     font-family: monospace;
     font-weight: bold;
     cursor: pointer;
-    color: #1a8cff;
+    color: #555;
     margin-right: -4px; /* Pulls the node closer to the toggle */
 }
 
