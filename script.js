@@ -149,6 +149,7 @@ function getPath(targetId) {
     return path;
 }
 
+
 /**
  * Global Expand/Collapse Toggle
  * @param {boolean} expand - True to show all, False to hide all
