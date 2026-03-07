@@ -89,12 +89,35 @@ function renderTree(node) {
 
 async function addNode() {
     const parentId = document.getElementById('parentId').value;
-    const content = document.getElementById('nodeContent').value;
+    const content = document.getElementById('nodeContent').value.trim(); // .trim() removes empty spaces
     const phone = document.getElementById('nodePhone').value;
     const description = document.getElementById('nodeDescription').value;
+    const hierarchyPath = document.getElementById('hierarchy-path').innerText;
 
-    if (!parentId || !content) return alert("Please select a parent node and enter a title.");
+    // 1. Validation: Ensure Node Content is not empty
+    if (!content) {
+        alert("Please enter a Title/Content for your new idea.");
+        document.getElementById('nodeContent').focus();
+        return;
+    }
 
+    // 2. Validation: Ensure a parent is selected
+    if (!parentId) {
+        alert("Please select a parent node from the tree first.");
+        return;
+    }
+
+    // 3. Confirmation Popup
+    const fullPathPreview = `${hierarchyPath} > ${content}`;
+    const confirmed = window.confirm(
+        `Are you sure you want to add this node?\n\n` +
+        `New Path: ${fullPathPreview}\n` +
+        `Phone: ${phone || "N/A"}`
+    );
+
+    if (!confirmed) return; // User clicked "Cancel"
+
+    // 4. Send Data to Google Apps Script
     const payload = { 
         Parent_ID: parentId, 
         Content: content,
@@ -103,22 +126,28 @@ async function addNode() {
     };
 
     const btn = document.querySelector('button[onclick="addNode()"]');
+    const originalText = btn.innerText;
     btn.innerText = "Adding...";
     btn.disabled = true;
 
-    await fetch(GAS_URL, {
-        method: 'POST',
-        body: JSON.stringify(payload)
-    });
+    try {
+        await fetch(GAS_URL, {
+            method: 'POST',
+            body: JSON.stringify(payload)
+        });
 
-    // Reset fields
-    document.getElementById('nodeContent').value = "";
-    document.getElementById('nodePhone').value = "";
-    document.getElementById('nodeDescription').value = "";
-    btn.innerText = "Add to Tree";
-    btn.disabled = false;
-
-    fetchTree(); 
+        // 5. Reset fields and refresh
+        document.getElementById('nodeContent').value = "";
+        document.getElementById('nodePhone').value = "";
+        document.getElementById('nodeDescription').value = "";
+        fetchTree(); 
+    } catch (error) {
+        alert("Error adding node. Please check your connection.");
+        console.error(error);
+    } finally {
+        btn.innerText = originalText;
+        btn.disabled = false;
+    }
 }
 
 
