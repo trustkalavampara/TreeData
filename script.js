@@ -105,24 +105,30 @@ async function addNode() {
     fetchTree(); // Refresh to show new node
 }
 
+
 function selectNode(id, element) {
-    // 1. Highlight UI in the tree
+    // 1. Highlight the node in the tree
     document.querySelectorAll('.node-container').forEach(el => el.classList.remove('node-active'));
     element.classList.add('node-active');
 
-    // 2. Find the node data in our global array
-    const selectedNode = allNodesGlobal.find(n => n.Node_ID == id);
+    // 2. Find the node data (Force ID to a Number for a clean match)
+    const selectedNode = allNodesGlobal.find(n => Number(n.Node_ID) === Number(id));
     
     if (selectedNode) {
         // Update the Hidden Input for the API call
         document.getElementById('parentId').value = id;
 
-        // Update the Visible Tile with the Content
+        // Update the Visible Tile with the actual Content
         document.getElementById('parent-tile-text').innerText = selectedNode.Content;
 
-        // 3. Display Hierarchy Path (Large & Bold)
+        // 3. Update the Bold Hierarchy Path
         const path = getPath(id);
         document.getElementById('hierarchy-path').innerText = path.join(" > ");
+        
+        // Optional: Scroll the form into view on mobile
+        document.querySelector('.add-node-form').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    } else {
+        console.error("Node not found in global data for ID:", id);
     }
 }
 
