@@ -90,19 +90,35 @@ function renderTree(node) {
 async function addNode() {
     const parentId = document.getElementById('parentId').value;
     const content = document.getElementById('nodeContent').value;
+    const phone = document.getElementById('nodePhone').value;
+    const description = document.getElementById('nodeDescription').value;
 
-    if (!parentId || !content) return alert("Please fill all fields");
+    if (!parentId || !content) return alert("Please select a parent node and enter a title.");
 
-    const payload = { Parent_ID: parentId, Content: content };
+    const payload = { 
+        Parent_ID: parentId, 
+        Content: content,
+        Phone: phone,
+        Description: description 
+    };
 
-    // Use 'no-cors' mode if you face issues, but standard fetch usually works for GAS
+    const btn = document.querySelector('button[onclick="addNode()"]');
+    btn.innerText = "Adding...";
+    btn.disabled = true;
+
     await fetch(GAS_URL, {
         method: 'POST',
         body: JSON.stringify(payload)
     });
 
+    // Reset fields
     document.getElementById('nodeContent').value = "";
-    fetchTree(); // Refresh to show new node
+    document.getElementById('nodePhone').value = "";
+    document.getElementById('nodeDescription').value = "";
+    btn.innerText = "Add to Tree";
+    btn.disabled = false;
+
+    fetchTree(); 
 }
 
 
