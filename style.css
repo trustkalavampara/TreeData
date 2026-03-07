@@ -70,19 +70,19 @@ li.collapsed > .node-container {
 
 /* 2. Parent Node Tile Style */
 .parent-tile {
-    background: #e9ecef;
-    border: 1px solid #ced4da;
+    background: #f8f9fa;
+    border: 2px solid #007bff; /* Brighter border to show activity */
     border-radius: 6px;
-    padding: 10px 15px;
+    padding: 12px 15px;
     margin-bottom: 15px;
-    display: inline-block;
-    min-width: 200px;
+    display: block; /* Takes full width of the form */
+    box-shadow: inset 0 1px 2px rgba(0,0,0,0.075);
 }
 
 #parent-tile-text {
-    font-weight: 600;
-    color: #495057;
-    font-style: italic;
+    font-weight: 700;
+    color: #007bff;
+    font-size: 1.1rem;
 }
 
 /* Layout for the input and button */
