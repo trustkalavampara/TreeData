@@ -11,3 +11,44 @@ li { margin: 5px 0; position: relative; }
 input { padding: 8px; margin-right: 5px; border: 1px solid #ccc; border-radius: 4px; }
 button { padding: 8px 15px; cursor: pointer; background: #28a745; color: white; border: none; border-radius: 4px; }
 button:hover { background: #218838; }
+
+/* Existing styles... */
+
+.node-container {
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 4px;
+    transition: background 0.2s;
+    display: inline-block;
+}
+
+.node-container:hover {
+    background: #e9ecef;
+}
+
+.node-active {
+    background: #d1ecf1 !important;
+    border: 1px solid #bee5eb;
+    font-weight: bold;
+}
+
+/* Expand/Collapse Toggle */
+.toggle-btn {
+    margin-right: 5px;
+    cursor: pointer;
+    font-family: monospace;
+    display: inline-block;
+    width: 15px;
+}
+
+.collapsed + ul {
+    display: none;
+}
+
+/* Breadcrumb / Hierarchy display in the form */
+#hierarchy-path {
+    font-size: 0.85em;
+    color: #666;
+    margin-bottom: 10px;
+    font-style: italic;
+}
