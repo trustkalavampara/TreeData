@@ -45,44 +45,45 @@ function renderTree(node) {
 
     const li = document.createElement('li');
     
-    // Create the container for the node text
-    const nodeWrapper = document.createElement('div');
-    nodeWrapper.className = "node-container";
-    nodeWrapper.innerHTML = `<span class="node-id">[${node.Node_ID}]</span> ${node.Content}`;
-    
-    // CLICK EVENT: Highlight and update form
-    nodeWrapper.onclick = (e) => {
-        e.stopPropagation(); // Prevent bubbling
-        selectNode(node.Node_ID, nodeWrapper);
-    };
+    // 1. Create the Toggle Button (+/-)
+    const hasChildren = node.children && node.children.length > 0;
+    const toggle = document.createElement('span');
+    toggle.className = "toggle-btn";
 
-    // Create Toggle Button (+/-)
-    if (node.children && node.children.length > 0) {
-        const toggle = document.createElement('span');
-        toggle.className = "toggle-btn";
-        toggle.innerText = "[-] ";
+    if (hasChildren) {
+        toggle.innerText = "[-] "; // Start expanded
         toggle.onclick = (e) => {
             e.stopPropagation();
             const isCollapsed = li.classList.toggle('collapsed');
             toggle.innerText = isCollapsed ? "[+] " : "[-] ";
         };
-        li.appendChild(toggle);
     } else {
-        const spacer = document.createElement('span');
-        spacer.className = "toggle-btn";
-        li.appendChild(spacer);
+        // No children = No button, just a spacer to keep alignment
+        toggle.innerHTML = "&nbsp;&nbsp;&nbsp;"; 
+        toggle.style.cursor = "default";
     }
+    li.appendChild(toggle);
 
+    // 2. Create the Node Text Container
+    const nodeWrapper = document.createElement('div');
+    nodeWrapper.className = "node-container";
+    nodeWrapper.innerHTML = `<span class="node-id">[${node.Node_ID}]</span> ${node.Content}`;
+    
+    nodeWrapper.onclick = (e) => {
+        e.stopPropagation();
+        selectNode(node.Node_ID, nodeWrapper);
+    };
     li.appendChild(nodeWrapper);
 
-    // Recursively add children
-    if (node.children && node.children.length > 0) {
+    // 3. Recursively add children
+    if (hasChildren) {
         const ul = document.createElement('ul');
         node.children.forEach(child => {
             ul.appendChild(renderTree(child));
         });
         li.appendChild(ul);
     }
+
     return li;
 }
 
