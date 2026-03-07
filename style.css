@@ -142,3 +142,62 @@ li.collapsed > .node-container {
     height: 80px;
     resize: vertical;
 }
+
+
+
+/* Modal Background */
+.modal-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.85);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 1000;
+}
+
+/* Big Modal Box */
+.modal-content {
+    background: white;
+    padding: 40px;
+    border-radius: 15px;
+    max-width: 90%;
+    width: 600px;
+    text-align: center;
+    border: 5px solid #007bff;
+}
+
+.modal-path {
+    font-size: 1.8rem;
+    font-weight: bold;
+    margin: 25px 0;
+    color: #333;
+    line-height: 1.4;
+    word-wrap: break-word;
+}
+
+.modal-details {
+    font-size: 1.4rem;
+    color: #555;
+    margin-bottom: 30px;
+    text-align: left;
+    background: #f8f9fa;
+    padding: 15px;
+}
+
+/* Huge Buttons */
+.btn-lg {
+    font-size: 1.8rem;
+    padding: 20px 40px;
+    margin: 10px;
+    cursor: pointer;
+    border-radius: 10px;
+    border: none;
+    font-weight: bold;
+    width: 100%; /* Stack on mobile, side-by-side on desktop */
+}
+
+@media (min-width: 600px) {
+    .btn-lg { width: auto; }
+}
+
+.btn-confirm { background-color: #28a745; color: white; }
+.btn-cancel { background-color: #dc3545; color: white; }
