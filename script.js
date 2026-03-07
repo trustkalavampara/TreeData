@@ -10,13 +10,13 @@ async function fetchTree() {
     try {
         const response = await fetch(GAS_URL);
         const data = await response.json();
+        allNodesGlobal = data; // Store for path tracing
         
-        container.innerHTML = ""; // Clear loader
+        container.innerHTML = "";
         const treeRoot = buildTree(data);
         container.appendChild(renderTree(treeRoot));
     } catch (err) {
-        container.innerHTML = "Error loading tree. Make sure your GAS URL is correct and deployed to 'Anyone'.";
-        console.error(err);
+        container.innerHTML = "Error loading tree.";
     }
 }
 
@@ -41,11 +41,41 @@ function buildTree(nodes) {
 
 // Logic to turn nested object into HTML
 function renderTree(node) {
-    if (!node) return document.createTextNode("No data");
+    if (!node) return document.createTextNode("");
 
     const li = document.createElement('li');
-    li.innerHTML = `<span class="node-id">[${node.Node_ID}]</span> ${node.Content}`;
+    
+    // Create the container for the node text
+    const nodeWrapper = document.createElement('div');
+    nodeWrapper.className = "node-container";
+    nodeWrapper.innerHTML = `<span class="node-id">[${node.Node_ID}]</span> ${node.Content}`;
+    
+    // CLICK EVENT: Highlight and update form
+    nodeWrapper.onclick = (e) => {
+        e.stopPropagation(); // Prevent bubbling
+        selectNode(node.Node_ID, nodeWrapper);
+    };
 
+    // Create Toggle Button (+/-)
+    if (node.children && node.children.length > 0) {
+        const toggle = document.createElement('span');
+        toggle.className = "toggle-btn";
+        toggle.innerText = "[-] ";
+        toggle.onclick = (e) => {
+            e.stopPropagation();
+            const isCollapsed = li.classList.toggle('collapsed');
+            toggle.innerText = isCollapsed ? "[+] " : "[-] ";
+        };
+        li.appendChild(toggle);
+    } else {
+        const spacer = document.createElement('span');
+        spacer.className = "toggle-btn";
+        li.appendChild(spacer);
+    }
+
+    li.appendChild(nodeWrapper);
+
+    // Recursively add children
     if (node.children && node.children.length > 0) {
         const ul = document.createElement('ul');
         node.children.forEach(child => {
@@ -72,4 +102,34 @@ async function addNode() {
 
     document.getElementById('nodeContent').value = "";
     fetchTree(); // Refresh to show new node
+}
+
+function selectNode(id, element) {
+    // 1. Highlight UI
+    document.querySelectorAll('.node-container').forEach(el => el.classList.remove('node-active'));
+    element.classList.add('node-active');
+
+    // 2. Update Read-Only Input
+    document.getElementById('parentId').value = id;
+
+    // 3. Display Hierarchy Path
+    const path = getPath(id);
+    document.getElementById('hierarchy-path').innerText = "Path: " + path.join(" > ");
+}
+
+// Recursive helper to find the path from Root to Node
+function getPath(targetId) {
+    let path = [];
+    let currentId = targetId;
+
+    while (currentId != 0) {
+        const node = allNodesGlobal.find(n => n.Node_ID == currentId);
+        if (node) {
+            path.unshift(node.Content); // Add to beginning
+            currentId = node.Parent_ID;
+        } else {
+            break;
+        }
+    }
+    return path;
 }
