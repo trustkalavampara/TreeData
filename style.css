@@ -128,13 +128,28 @@ body {
 .toggle-btn {
     position: relative;
     z-index: 2; 
-    background: #d9d9d9; /* Matches body background to blend in */
-    padding: 0 2px;
+    background: #d9d9d9; /* Your updated color */
+    
+    /* Added for consistent square shape */
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    line-height: 18px; /* Centers the + or - vertically */
+    text-align: center;
+    border-radius: 3px;
+    border: 1px solid #b0b0b0;
+    
     font-family: monospace;
     font-weight: bold;
     cursor: pointer;
-    color: #555;
-    margin-right: -4px; /* Pulls the node closer to the toggle */
+    color: #333;
+    margin-right: -4px; 
+    user-select: none;
+}
+
+.toggle-btn:hover {
+    background: #cccccc;
+    color: #000;
 }
 
 /* Collapsed State Logic */
