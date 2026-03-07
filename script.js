@@ -148,3 +148,26 @@ function getPath(targetId) {
     }
     return path;
 }
+
+/**
+ * Global Expand/Collapse Toggle
+ * @param {boolean} expand - True to show all, False to hide all
+ */
+function toggleAll(expand) {
+    const listItems = document.querySelectorAll('#tree-container li');
+    
+    listItems.forEach(li => {
+        const toggleBtn = li.querySelector('.toggle-btn');
+        const hasChildren = li.querySelector('ul');
+
+        if (hasChildren && toggleBtn) {
+            if (expand) {
+                li.classList.remove('collapsed');
+                toggleBtn.innerText = "[-] ";
+            } else {
+                li.classList.add('collapsed');
+                toggleBtn.innerText = "[+] ";
+            }
+        }
+    });
+}
