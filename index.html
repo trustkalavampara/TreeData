@@ -20,12 +20,14 @@
 
         <hr>
 
-        <div class="add-node-form">
-            <h3>Add New Node</h3>
-            <input type="number" id="parentId" placeholder="Parent Node ID (e.g. 1)" required>
-            <input type="text" id="nodeContent" placeholder="Enter your idea..." required>
-            <button onclick="addNode()">Add to Tree</button>
-        </div>
+<div class="add-node-form">
+    <h3>Add New Node</h3>
+    <div id="hierarchy-path">Select a node to see its hierarchy...</div>
+    
+    <input type="number" id="parentId" placeholder="Parent ID" readonly>
+    <input type="text" id="nodeContent" placeholder="Enter your idea..." required>
+    <button onclick="addNode()">Add to Tree</button>
+</div>
     </div>
 
     <script src="script.js"></script>
