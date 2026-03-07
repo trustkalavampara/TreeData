@@ -1,35 +1,70 @@
 /* ==========================================================================
-   1. BASE STYLES & LAYOUT
+   1. MOBILE-FIRST BASE STYLES & LAYOUT
    ========================================================================== */
+* {
+    box-sizing: border-box; /* Critical for mobile layout math */
+}
+
 body { 
-    font-family: sans-serif; 
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
     background: #f4f4f9; 
-    padding: 20px; 
+    padding: 10px; 
+    margin: 0;
     color: #333;
+    line-height: 1.5;
 }
 
 .container { 
-    max-width: 800px; 
-    margin: auto; 
+    width: 100%;
+    max-width: 100%;
+    margin: 0 auto; 
     background: white; 
-    padding: 20px; 
+    padding: 15px; 
     border-radius: 8px; 
     box-shadow: 0 2px 10px rgba(0,0,0,0.1); 
 }
 
 /* ==========================================================================
-   2. TREE STRUCTURE & CONNECTING LINES
+   2. GLOBAL CONTROLS (Sticky for Mobile)
    ========================================================================== */
-
-/* Main container for the tree lists */
-#tree-container ul {
-    list-style-type: none;
-    padding-left: 30px; 
-    position: relative;
-    margin: 0;
+.global-controls {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: #f4f4f9;
+    padding: 10px 0;
+    margin-bottom: 20px;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap; /* Allows buttons to wrap on narrow screens */
 }
 
-/* The Vertical Line: Connects siblings together */
+.global-controls button {
+    flex: 1 1 auto; /* Buttons grow to fill space on mobile */
+    min-width: 120px;
+    padding: 12px 10px;
+    font-size: 0.9rem;
+}
+
+/* ==========================================================================
+   3. TREE STRUCTURE (Responsive & Connectors)
+   ========================================================================== */
+
+/* Enables horizontal scroll for deep nesting on mobile */
+#tree-container {
+    overflow-x: auto;
+    padding-bottom: 20px;
+    -webkit-overflow-scrolling: touch;
+}
+
+#tree-container ul {
+    list-style-type: none;
+    padding-left: 25px; 
+    position: relative;
+    margin: 0;
+    min-width: max-content; /* Prevents text wrapping while scrolling */
+}
+
 #tree-container ul::before {
     content: "";
     position: absolute;
@@ -37,40 +72,35 @@ body {
     left: 10px;
     bottom: 0;
     width: 2px;
-    background: #888; /* Solid medium-grey for better visibility */
+    background: #888;
 }
 
-/* Individual list items (Nodes) */
 #tree-container li {
     margin: 0;
-    padding: 8px 0;
+    padding: 10px 0; /* Larger vertical gap for touch */
     position: relative;
 }
 
-/* The Horizontal Branch: Connects the vertical line to the node content */
 #tree-container li::before {
     content: "";
     position: absolute;
-    top: 20px;        /* Adjusted to align with thinner padding */
+    top: 24px;        
     left: -20px;      
     width: 22px;      
     height: 2px;
     background: #888;
 }
 
-
-/* Hide the vertical tail on the last sibling of any branch */
 #tree-container li:last-child::after {
     content: "";
     position: absolute;
-    background: white; /* Matches page background to mask the vertical line */
-    top: 23px;
+    background: white; 
+    top: 25px;
     bottom: 0;
     left: -22px;
     width: 5px;
 }
 
-/* Root level cleanup: The very first list shouldn't have vertical/horizontal lines */
 #tree-container > ul::before, 
 #tree-container > ul > li::before,
 #tree-container > ul > li:last-child::after {
@@ -78,166 +108,117 @@ body {
 }
 
 /* ==========================================================================
-   3. NODE INTERACTIVE ELEMENTS
+   4. NODE INTERACTIVE ELEMENTS (Touch Optimized)
    ========================================================================== */
 
-/* The actual text/box for the node */
-/* The actual text/box for the node */
 .node-container {
     cursor: pointer;
-    padding: 2px 8px;      /* Decreased padding for a tighter look */
-    border-radius: 4px;
+    padding: 8px 12px; /* Fat-finger friendly */
+    border-radius: 6px;
     transition: all 0.2s ease;
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
     position: relative;
     z-index: 1; 
     background: #ffffff;
-    /* Subtle border for unselected nodes */
     border: 1px solid #d1d1d1; 
-    margin-left: 2px;      /* Closes the gap with the horizontal line */
-    font-size: 0.95rem;
+    margin-left: 2px;
+    font-size: 16px; /* Prevents auto-zoom on mobile */
     box-shadow: 0 1px 2px rgba(0,0,0,0.05);
 }
 
-.node-container:hover {
-    background: #f0f7ff;
-    border-color: #007bff;
-    transform: translateY(-1px); /* Slight lift effect */
-}
-
-/* Highlight for the currently selected parent - Now overrides the default border */
 .node-active {
     background-color: #ff4d4d !important; 
     color: white !important;
     border: 1px solid #cc0000 !important;
     font-weight: bold;
-    box-shadow: 0 2px 4px rgba(204, 0, 0, 0.3);
+    box-shadow: 0 4px 8px rgba(204, 0, 0, 0.2);
 }
 
-.node-active .node-id { 
-    color: #ffdada !important; /* Lighter ID color for contrast on red */
-}
+.node-id { font-weight: bold; color: #007bff; margin-right: 6px; }
 
-.node-id { 
-    font-weight: bold; 
-    color: #007bff; 
-    margin-right: 4px; 
-}
-
-/* Expand/Collapse Toggle Button */
 .toggle-btn {
     position: relative;
     z-index: 2; 
-    background: #d9d9d9; /* Your updated color */
-    
-    /* Added for consistent square shape */
+    background: #d9d9d9;
     display: inline-block;
-    width: 20px;
-    height: 20px;
-    line-height: 18px; /* Centers the + or - vertically */
+    width: 28px;  /* Larger tap target */
+    height: 28px;
+    line-height: 26px;
     text-align: center;
-    border-radius: 3px;
+    border-radius: 4px;
     border: 1px solid #b0b0b0;
-    
     font-family: monospace;
     font-weight: bold;
     cursor: pointer;
     color: #333;
-    margin-right: -4px; 
+    margin-right: -2px;
     user-select: none;
 }
 
-.toggle-btn:hover {
-    background: #cccccc;
-    color: #000;
-}
-
-/* Collapsed State Logic */
 li.collapsed > ul { display: none; }
-
-li.collapsed > .node-container {
-    border: 1px dashed #0056b3; /* Visual cue that it contains hidden children */
-    background: #f8fbff;
-}
+li.collapsed > .node-container { border: 1px dashed #0056b3; background: #f8fbff; }
 
 /* ==========================================================================
-   4. FORM & UI CONTROLS
+   5. FORM & UI CONTROLS
    ========================================================================== */
 
 .add-node-form { 
     background: #f1f1f1; 
-    padding: 20px; 
-    border-radius: 8px; 
+    padding: 15px; 
+    border-radius: 12px; 
     margin-top: 30px;
 }
 
 #hierarchy-path {
-    font-size: 1.25rem;
+    font-size: 1.1rem;
     font-weight: 800;
     color: #2c3e50;
     margin-bottom: 15px;
     line-height: 1.4;
     border-left: 5px solid #007bff;
-    padding-left: 15px;
+    padding-left: 12px;
 }
 
 .parent-tile {
     background: #fff;
     border: 2px solid #007bff;
-    border-radius: 6px;
-    padding: 12px 15px;
+    border-radius: 8px;
+    padding: 15px;
     margin-bottom: 20px;
-    box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
-}
-
-#parent-tile-text {
-    font-weight: 700;
-    color: #007bff;
-    font-size: 1.1rem;
 }
 
 .input-group-vertical {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 15px;
 }
 
 .input-group-vertical input, 
 .input-group-vertical textarea {
-    padding: 12px;
+    padding: 14px;
     border: 1px solid #ccc;
-    border-radius: 4px;
+    border-radius: 8px;
     width: 100%;
-    box-sizing: border-box;
-    font-size: 1rem;
+    font-size: 16px; /* Mandatory for mobile to prevent zoom */
 }
 
-.input-group-vertical textarea { height: 100px; resize: vertical; }
-
 button { 
-    padding: 12px 20px; 
+    padding: 16px 20px; 
     cursor: pointer; 
     background: #28a745; 
     color: white; 
     border: none; 
-    border-radius: 4px; 
+    border-radius: 8px; 
     font-weight: bold;
-    font-size: 1rem;
+    font-size: 1.1rem;
+    transition: filter 0.2s;
 }
 
-button:hover { background: #218838; }
-
-.global-controls {
-    margin-bottom: 25px;
-    display: flex;
-    gap: 12px;
-}
-
-.btn-secondary { background-color: #6c757d; }
-.btn-secondary:hover { background-color: #5a6268; }
+button:active { filter: brightness(0.8); }
 
 /* ==========================================================================
-   5. ACCESSIBLE MODAL (OLD-AGE FRIENDLY)
+   6. ACCESSIBLE MODAL
    ========================================================================== */
 .modal-overlay {
     position: fixed;
@@ -249,39 +230,42 @@ button:hover { background: #218838; }
 
 .modal-content {
     background: white;
-    padding: 40px;
+    padding: 25px;
     border-radius: 15px;
-    max-width: 90%;
-    width: 600px;
+    width: 95%;
+    max-width: 500px;
     text-align: center;
-    border: 5px solid #007bff;
+    border: 4px solid #007bff;
 }
 
-.modal-path {
-    font-size: 1.8rem;
-    font-weight: bold;
-    margin: 25px 0;
-    color: #333;
-}
+.modal-path { font-size: 1.4rem; font-weight: bold; margin: 20px 0; color: #333; }
+.modal-details { font-size: 1.1rem; text-align: left; background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 20px; }
 
-.modal-details {
-    font-size: 1.4rem;
-    color: #444;
-    margin-bottom: 30px;
-    text-align: left;
-    background: #f8f9fa;
-    padding: 20px;
-    border: 1px solid #ddd;
-}
-
-.btn-lg {
-    font-size: 1.8rem;
-    padding: 20px 40px;
-    margin: 10px;
-    border-radius: 10px;
-    border: none;
-    font-weight: bold;
-}
-
+.btn-lg { width: 100%; font-size: 1.4rem; padding: 18px; margin: 5px 0; border-radius: 10px; border: none; font-weight: bold; }
 .btn-confirm { background-color: #28a745; color: white; }
 .btn-cancel { background-color: #dc3545; color: white; }
+
+/* ==========================================================================
+   7. DESKTOP ENHANCEMENTS (Tablet & PC)
+   ========================================================================== */
+@media (min-width: 768px) {
+    body { padding: 30px; }
+    
+    .container { 
+        max-width: 800px; 
+        margin: auto; 
+        padding: 30px;
+    }
+
+    .global-controls { position: static; background: transparent; padding: 0; }
+    .global-controls button { flex: 0 1 auto; width: auto; }
+
+    .node-container { padding: 4px 10px; font-size: 0.95rem; }
+    .toggle-btn { width: 22px; height: 22px; line-height: 20px; font-size: 1rem; }
+
+    .btn-lg { width: auto; margin: 10px; }
+    
+    .modal-content { padding: 40px; width: 600px; }
+    .modal-path { font-size: 1.8rem; }
+    .modal-details { font-size: 1.4rem; }
+}
