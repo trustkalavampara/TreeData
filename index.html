@@ -1,1 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TreeData - Collaborative Mind Map</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>[TreeData] Collaborative Idea Tree</h1>
+        
+        <div class="controls">
+            <button onclick="fetchTree()">🔄 Refresh Tree</button>
+        </div>
 
+        <div id="tree-container">
+            <p>Loading tree...</p>
+        </div>
+
+        <hr>
+
+        <div class="add-node-form">
+            <h3>Add New Node</h3>
+            <input type="number" id="parentId" placeholder="Parent Node ID (e.g. 1)" required>
+            <input type="text" id="nodeContent" placeholder="Enter your idea..." required>
+            <button onclick="addNode()">Add to Tree</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
