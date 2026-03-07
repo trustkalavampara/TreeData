@@ -32,13 +32,25 @@ button:hover { background: #218838; }
     font-weight: bold;
 }
 
+/* This ensures the ul specifically is hidden when the parent li has the .collapsed class */
+li.collapsed > ul {
+    display: none;
+}
+
 /* Expand/Collapse Toggle */
 .toggle-btn {
-    margin-right: 5px;
     cursor: pointer;
     font-family: monospace;
-    display: inline-block;
-    width: 15px;
+    font-weight: bold;
+    color: #555;
+    padding: 2px 5px;
+    user-select: none; /* Prevents text selection on double click */
+}
+
+/* Optional: style the node when it's collapsed to show there's hidden content */
+li.collapsed > .node-container {
+    color: #0056b3;
+    text-decoration: underline dotted;
 }
 
 .collapsed + ul {
