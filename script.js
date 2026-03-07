@@ -87,69 +87,53 @@ function renderTree(node) {
     return li;
 }
 
+// Replace your existing addNode function with this one
 async function addNode() {
     const parentId = document.getElementById('parentId').value;
-    const content = document.getElementById('nodeContent').value.trim(); // .trim() removes empty spaces
+    const content = document.getElementById('nodeContent').value.trim();
     const phone = document.getElementById('nodePhone').value;
     const description = document.getElementById('nodeDescription').value;
     const hierarchyPath = document.getElementById('hierarchy-path').innerText;
 
-    // 1. Validation: Ensure Node Content is not empty
-    if (!content) {
-        alert("Please enter a Title/Content for your new idea.");
-        document.getElementById('nodeContent').focus();
-        return;
-    }
+    if (!content) return alert("Please enter a Title.");
+    if (!parentId) return alert("Please select a parent node first.");
 
-    // 2. Validation: Ensure a parent is selected
-    if (!parentId) {
-        alert("Please select a parent node from the tree first.");
-        return;
-    }
+    // Prepare Modal Data
+    document.getElementById('modal-path-preview').innerText = `${hierarchyPath} > ${content}`;
+    document.getElementById('modal-phone-preview').innerText = phone ? `📞 Phone: ${phone}` : "";
+    document.getElementById('modal-desc-preview').innerText = description ? `📝 Note: ${description}` : "";
 
-    // 3. Confirmation Popup
-    const fullPathPreview = `${hierarchyPath} > ${content}`;
-    const confirmed = window.confirm(
-        `Are you sure you want to add this node?\n\n` +
-        `New Path: ${fullPathPreview}\n` +
-        `Phone: ${phone || "N/A"}`
-    );
+    // Show Modal
+    const modal = document.getElementById('custom-modal');
+    modal.style.display = 'flex';
 
-    if (!confirmed) return; // User clicked "Cancel"
+    // Wait for button click using a Promise
+    const confirmed = await new Promise((resolve) => {
+        document.getElementById('confirm-yes').onclick = () => { modal.style.display = 'none'; resolve(true); };
+        document.getElementById('confirm-no').onclick = () => { modal.style.display = 'none'; resolve(false); };
+    });
 
-    // 4. Send Data to Google Apps Script
-    const payload = { 
-        Parent_ID: parentId, 
-        Content: content,
-        Phone: phone,
-        Description: description 
-    };
+    if (!confirmed) return;
 
+    // Proceed with Fetch
+    const payload = { Parent_ID: parentId, Content: content, Phone: phone, Description: description };
     const btn = document.querySelector('button[onclick="addNode()"]');
-    const originalText = btn.innerText;
     btn.innerText = "Adding...";
     btn.disabled = true;
 
     try {
-        await fetch(GAS_URL, {
-            method: 'POST',
-            body: JSON.stringify(payload)
-        });
-
-        // 5. Reset fields and refresh
+        await fetch(GAS_URL, { method: 'POST', body: JSON.stringify(payload) });
         document.getElementById('nodeContent').value = "";
         document.getElementById('nodePhone').value = "";
         document.getElementById('nodeDescription').value = "";
-        fetchTree(); 
-    } catch (error) {
-        alert("Error adding node. Please check your connection.");
-        console.error(error);
+        fetchTree();
+    } catch (err) {
+        alert("Network Error!");
     } finally {
-        btn.innerText = originalText;
+        btn.innerText = "Add to Tree";
         btn.disabled = false;
     }
 }
-
 
 function selectNode(id, element) {
     // 1. Highlight the node in the tree
