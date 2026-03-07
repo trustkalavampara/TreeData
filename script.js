@@ -1,4 +1,4 @@
-const GAS_URL = "YOUR_GAS_WEB_APP_URL";
+const GAS_URL = "https://script.google.com/macros/s/AKfycbzpGnygs5D7ujnWzSi19R7TZOVrJusPaFsDHvkcd8PCMpUt7PLf2t5GSeUFQyp_pcfsLQ/exec";
 
 // Fetch data on load
 window.onload = fetchTree;
