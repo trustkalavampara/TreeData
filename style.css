@@ -59,12 +59,13 @@ body {
 
 #tree-container ul {
     list-style-type: none;
-    padding-left: 25px; 
+    padding-left: 30px; 
     position: relative;
     margin: 0;
-    min-width: max-content; /* Prevents text wrapping while scrolling */
+    min-width: max-content;
 }
 
+/* The Vertical Line */
 #tree-container ul::before {
     content: "";
     position: absolute;
@@ -77,30 +78,34 @@ body {
 
 #tree-container li {
     margin: 0;
-    padding: 10px 0; /* Larger vertical gap for touch */
+    padding: 10px 0;
     position: relative;
+    display: block;
 }
 
+/* The Horizontal Branch - Centered to the 28px toggle/node */
 #tree-container li::before {
     content: "";
     position: absolute;
-    top: 24px;        
+    top: 24px;        /* Halfway point of a standard mobile row */
     left: -20px;      
-    width: 22px;      
+    width: 20px;      
     height: 2px;
     background: #888;
 }
 
+/* The "Tail Cutter" - Masks the vertical line below the last sibling */
 #tree-container li:last-child::after {
     content: "";
     position: absolute;
     background: white; 
-    top: 25px;
+    top: 25px;        /* Starts 1px below the horizontal line */
     bottom: 0;
-    left: -22px;
-    width: 5px;
+    left: -22px;      /* Matches the vertical line's position */
+    width: 4px;       /* Wide enough to cover the 2px line */
 }
 
+/* Root level: No lines for the very first node */
 #tree-container > ul::before, 
 #tree-container > ul > li::before,
 #tree-container > ul > li:last-child::after {
