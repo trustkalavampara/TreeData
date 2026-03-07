@@ -57,10 +57,43 @@ li.collapsed > .node-container {
     display: none;
 }
 
-/* Breadcrumb / Hierarchy display in the form */
+/* 1. Large and Bold Hierarchy */
 #hierarchy-path {
-    font-size: 0.85em;
-    color: #666;
-    margin-bottom: 10px;
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: #2c3e50;
+    margin-bottom: 15px;
+    line-height: 1.4;
+    border-left: 4px solid #007bff;
+    padding-left: 15px;
+}
+
+/* 2. Parent Node Tile Style */
+.parent-tile {
+    background: #e9ecef;
+    border: 1px solid #ced4da;
+    border-radius: 6px;
+    padding: 10px 15px;
+    margin-bottom: 15px;
+    display: inline-block;
+    min-width: 200px;
+}
+
+#parent-tile-text {
+    font-weight: 600;
+    color: #495057;
     font-style: italic;
 }
+
+/* Layout for the input and button */
+.input-group {
+    display: flex;
+    gap: 10px;
+}
+
+#nodeContent {
+    flex-grow: 1;
+}
+
+
+
