@@ -122,3 +122,23 @@ li.collapsed > .node-container {
     background-color: #5a6268;
 }
 
+
+.input-group-vertical {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.input-group-vertical input, 
+.input-group-vertical textarea {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    width: 100%;
+    box-sizing: border-box; /* Ensures padding doesn't break width */
+}
+
+.input-group-vertical textarea {
+    height: 80px;
+    resize: vertical;
+}
