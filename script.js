@@ -106,16 +106,24 @@ async function addNode() {
 }
 
 function selectNode(id, element) {
-    // 1. Highlight UI
+    // 1. Highlight UI in the tree
     document.querySelectorAll('.node-container').forEach(el => el.classList.remove('node-active'));
     element.classList.add('node-active');
 
-    // 2. Update Read-Only Input
-    document.getElementById('parentId').value = id;
+    // 2. Find the node data in our global array
+    const selectedNode = allNodesGlobal.find(n => n.Node_ID == id);
+    
+    if (selectedNode) {
+        // Update the Hidden Input for the API call
+        document.getElementById('parentId').value = id;
 
-    // 3. Display Hierarchy Path
-    const path = getPath(id);
-    document.getElementById('hierarchy-path').innerText = "Path: " + path.join(" > ");
+        // Update the Visible Tile with the Content
+        document.getElementById('parent-tile-text').innerText = selectedNode.Content;
+
+        // 3. Display Hierarchy Path (Large & Bold)
+        const path = getPath(id);
+        document.getElementById('hierarchy-path').innerText = path.join(" > ");
+    }
 }
 
 // Recursive helper to find the path from Root to Node
