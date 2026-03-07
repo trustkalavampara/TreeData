@@ -1,14 +1,35 @@
-body { font-family: sans-serif; background: #f4f4f9; padding: 20px; }
-.container { max-width: 800px; margin: auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-
-/* Container for the tree */
-#tree-container ul {
-    list-style-type: none;
-    padding-left: 30px; /* Space for the lines */
-    position: relative;
+/* ==========================================================================
+   1. BASE STYLES & LAYOUT
+   ========================================================================== */
+body { 
+    font-family: sans-serif; 
+    background: #f4f4f9; 
+    padding: 20px; 
+    color: #333;
 }
 
-/* The Vertical Line */
+.container { 
+    max-width: 800px; 
+    margin: auto; 
+    background: white; 
+    padding: 20px; 
+    border-radius: 8px; 
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1); 
+}
+
+/* ==========================================================================
+   2. TREE STRUCTURE & CONNECTING LINES
+   ========================================================================== */
+
+/* Main container for the tree lists */
+#tree-container ul {
+    list-style-type: none;
+    padding-left: 30px; 
+    position: relative;
+    margin: 0;
+}
+
+/* The Vertical Line: Connects siblings together */
 #tree-container ul::before {
     content: "";
     position: absolute;
@@ -16,125 +37,128 @@ body { font-family: sans-serif; background: #f4f4f9; padding: 20px; }
     left: 10px;
     bottom: 0;
     width: 2px;
-    background: #888; /* Darker, solid vertical line */
+    background: #888; /* Solid medium-grey for better visibility */
 }
 
-/* The Horizontal Branch Line */
+/* Individual list items (Nodes) */
 #tree-container li {
     margin: 0;
-    padding: 10px 0;
+    padding: 8px 0;
     position: relative;
 }
 
+/* The Horizontal Branch: Connects the vertical line to the node content */
 #tree-container li::before {
     content: "";
     position: absolute;
-    top: 22px; /* Centers the branch to the node text */
-    left: -20px;
-    width: 20px;
+    top: 22px;        /* Vertically centered to the node container */
+    left: -20px;      /* Connects back to the parent's vertical line */
+    width: 22px;      /* Slightly wider to ensure overlap */
     height: 2px;
-    background: #888; /* Solid horizontal branch */
+    background: #888;
 }
 
-/* Hide the vertical line tail on the very last item of a branch */
-#tree-container li:last-child::before {
-    background: white; /* Matches page background to "cut" the line */
-    height: auto;
-    top: 22px;
+/* Hide the vertical tail on the last sibling of any branch */
+#tree-container li:last-child::after {
+    content: "";
+    position: absolute;
+    background: white; /* Matches page background to mask the vertical line */
+    top: 23px;
     bottom: 0;
+    left: -22px;
+    width: 5px;
 }
 
-/* Special case for the very last item to stop the vertical line from hanging */
-#tree-container ul > li:last-child:only-child::before {
-    display: none;
-}
-
-/* Ensure the root node (top level) doesn't have a horizontal branch coming from nowhere */
+/* Root level cleanup: The very first list shouldn't have vertical/horizontal lines */
 #tree-container > ul::before, 
-#tree-container > ul > li::before {
+#tree-container > ul > li::before,
+#tree-container > ul > li:last-child::after {
     display: none;
 }
 
-/* Tree Styling */
-ul { list-style-type: none; padding-left: 20px; border-left: 1px dashed #ccc; }
-li { margin: 5px 0; position: relative; }
-.node-id { font-weight: bold; color: #007bff; margin-right: 5px; }
+/* ==========================================================================
+   3. NODE INTERACTIVE ELEMENTS
+   ========================================================================== */
 
-.add-node-form { background: #eee; padding: 15px; border-radius: 4px; }
-input { padding: 8px; margin-right: 5px; border: 1px solid #ccc; border-radius: 4px; }
-button { padding: 8px 15px; cursor: pointer; background: #28a745; color: white; border: none; border-radius: 4px; }
-button:hover { background: #218838; }
-
-/* Existing styles... */
-
+/* The actual text/box for the node */
 .node-container {
     cursor: pointer;
-    padding: 4px 8px;
+    padding: 6px 12px;
     border-radius: 4px;
     transition: background 0.2s;
     display: inline-block;
+    position: relative;
+    z-index: 1; /* Keeps text above lines */
+    background: white;
+    border: 1px solid transparent;
 }
 
 .node-container:hover {
     background: #e9ecef;
+    border-color: #ccc;
 }
 
+/* Highlight for the currently selected parent */
 .node-active {
-    background-color: #ff4d4d !important; /* Bold Red */
+    background-color: #ff4d4d !important; 
     color: white !important;
     border: 1px solid #cc0000;
     font-weight: bold;
-    box-shadow: 0 0 5px rgba(255, 77, 77, 0.5);
+    box-shadow: 0 0 8px rgba(255, 77, 77, 0.5);
 }
 
-.node-active .node-id {
-    color: #fff !important; /* Ensure ID is readable on red */
-}
+.node-active .node-id { color: #fff !important; }
 
-/* This ensures the ul specifically is hidden when the parent li has the .collapsed class */
-li.collapsed > ul {
-    display: none;
-}
+.node-id { font-weight: bold; color: #007bff; margin-right: 5px; }
 
-/* Expand/Collapse Toggle */
-/* Adjustment for the toggle button so it sits on top of lines */
+/* Expand/Collapse Toggle Button */
 .toggle-btn {
     position: relative;
-    z-index: 2;
+    z-index: 2; /* Sits on top of the connection lines */
     background: white;
-    padding: 0 2px;
+    padding: 0 4px;
+    font-family: monospace;
+    font-weight: bold;
+    cursor: pointer;
+    color: #555;
 }
 
-/* Optional: style the node when it's collapsed to show there's hidden content */
+/* Collapsed State Logic */
+li.collapsed > ul { display: none; }
+
 li.collapsed > .node-container {
     color: #0056b3;
     text-decoration: underline dotted;
 }
 
-.collapsed + ul {
-    display: none;
+/* ==========================================================================
+   4. FORM & UI CONTROLS
+   ========================================================================== */
+
+.add-node-form { 
+    background: #f1f1f1; 
+    padding: 20px; 
+    border-radius: 8px; 
+    margin-top: 30px;
 }
 
-/* 1. Large and Bold Hierarchy */
 #hierarchy-path {
     font-size: 1.25rem;
     font-weight: 800;
     color: #2c3e50;
     margin-bottom: 15px;
     line-height: 1.4;
-    border-left: 4px solid #007bff;
+    border-left: 5px solid #007bff;
     padding-left: 15px;
 }
 
-/* 2. Parent Node Tile Style */
 .parent-tile {
-    background: #f8f9fa;
-    border: 2px solid #007bff; /* Brighter border to show activity */
+    background: #fff;
+    border: 2px solid #007bff;
     border-radius: 6px;
     padding: 12px 15px;
-    margin-bottom: 15px;
-    display: block; /* Takes full width of the form */
-    box-shadow: inset 0 1px 2px rgba(0,0,0,0.075);
+    margin-bottom: 20px;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
 }
 
 #parent-tile-text {
@@ -142,38 +166,6 @@ li.collapsed > .node-container {
     color: #007bff;
     font-size: 1.1rem;
 }
-
-/* Layout for the input and button */
-.input-group {
-    display: flex;
-    gap: 10px;
-}
-
-#nodeContent {
-    flex-grow: 1;
-}
-
-/* 2. Style for the new Global Control Buttons */
-.global-controls {
-    margin-bottom: 20px;
-    display: flex;
-    gap: 10px;
-}
-
-.btn-secondary {
-    background-color: #6c757d;
-    color: white;
-    border: none;
-    padding: 8px 12px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 0.9rem;
-}
-
-.btn-secondary:hover {
-    background-color: #5a6268;
-}
-
 
 .input-group-vertical {
     display: flex;
@@ -183,21 +175,41 @@ li.collapsed > .node-container {
 
 .input-group-vertical input, 
 .input-group-vertical textarea {
-    padding: 10px;
+    padding: 12px;
     border: 1px solid #ccc;
     border-radius: 4px;
     width: 100%;
-    box-sizing: border-box; /* Ensures padding doesn't break width */
+    box-sizing: border-box;
+    font-size: 1rem;
 }
 
-.input-group-vertical textarea {
-    height: 80px;
-    resize: vertical;
+.input-group-vertical textarea { height: 100px; resize: vertical; }
+
+button { 
+    padding: 12px 20px; 
+    cursor: pointer; 
+    background: #28a745; 
+    color: white; 
+    border: none; 
+    border-radius: 4px; 
+    font-weight: bold;
+    font-size: 1rem;
 }
 
+button:hover { background: #218838; }
 
+.global-controls {
+    margin-bottom: 25px;
+    display: flex;
+    gap: 12px;
+}
 
-/* Modal Background */
+.btn-secondary { background-color: #6c757d; }
+.btn-secondary:hover { background-color: #5a6268; }
+
+/* ==========================================================================
+   5. ACCESSIBLE MODAL (OLD-AGE FRIENDLY)
+   ========================================================================== */
 .modal-overlay {
     position: fixed;
     top: 0; left: 0; width: 100%; height: 100%;
@@ -206,7 +218,6 @@ li.collapsed > .node-container {
     z-index: 1000;
 }
 
-/* Big Modal Box */
 .modal-content {
     background: white;
     padding: 40px;
@@ -222,33 +233,25 @@ li.collapsed > .node-container {
     font-weight: bold;
     margin: 25px 0;
     color: #333;
-    line-height: 1.4;
-    word-wrap: break-word;
 }
 
 .modal-details {
     font-size: 1.4rem;
-    color: #555;
+    color: #444;
     margin-bottom: 30px;
     text-align: left;
     background: #f8f9fa;
-    padding: 15px;
+    padding: 20px;
+    border: 1px solid #ddd;
 }
 
-/* Huge Buttons */
 .btn-lg {
     font-size: 1.8rem;
     padding: 20px 40px;
     margin: 10px;
-    cursor: pointer;
     border-radius: 10px;
     border: none;
     font-weight: bold;
-    width: 100%; /* Stack on mobile, side-by-side on desktop */
-}
-
-@media (min-width: 600px) {
-    .btn-lg { width: auto; }
 }
 
 .btn-confirm { background-color: #28a745; color: white; }
