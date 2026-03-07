@@ -27,9 +27,15 @@ button:hover { background: #218838; }
 }
 
 .node-active {
-    background: #d1ecf1 !important;
-    border: 1px solid #bee5eb;
+    background-color: #ff4d4d !important; /* Bold Red */
+    color: white !important;
+    border: 1px solid #cc0000;
     font-weight: bold;
+    box-shadow: 0 0 5px rgba(255, 77, 77, 0.5);
+}
+
+.node-active .node-id {
+    color: #fff !important; /* Ensure ID is readable on red */
 }
 
 /* This ensures the ul specifically is hidden when the parent li has the .collapsed class */
@@ -95,5 +101,24 @@ li.collapsed > .node-container {
     flex-grow: 1;
 }
 
+/* 2. Style for the new Global Control Buttons */
+.global-controls {
+    margin-bottom: 20px;
+    display: flex;
+    gap: 10px;
+}
 
+.btn-secondary {
+    background-color: #6c757d;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+
+.btn-secondary:hover {
+    background-color: #5a6268;
+}
 
