@@ -27,16 +27,16 @@ body {
 /* ==========================================================================
    2. GLOBAL CONTROLS (Sticky for Mobile)
    ========================================================================== */
-.global-controls {
-    position: sticky;
+.global-controls, .controls {
+    margin: 0;
+    padding: 25px 0; /* Increased top and bottom height for better separation */
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap; /* Important for mobile wrapping */
+    background: #f4f4f9; /* Keeps it consistent with body */
+    position: sticky; /* Keeps buttons accessible while scrolling */
     top: 0;
     z-index: 100;
-    background: #f4f4f9;
-    padding: 10px 0;
-    margin-bottom: 20px;
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap; /* Allows buttons to wrap on narrow screens */
 }
 
 .global-controls button {
@@ -44,6 +44,28 @@ body {
     min-width: 120px;
     padding: 12px 10px;
     font-size: 0.9rem;
+}
+
+.btn-secondary {
+    background-color: #0056b3 !important; /* Professional Deep Blue */
+    color: white !important;
+    border: 1px solid #004494;
+    padding: 14px 20px; /* Larger tap target for mobile */
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 1rem;
+    transition: background 0.2s, transform 0.1s;
+}
+
+.btn-secondary:hover {
+    background-color: #004494 !important;
+    transform: translateY(-1px);
+}
+
+.btn-secondary:active {
+    background-color: #003366 !important;
+    transform: translateY(0);
 }
 
 /* ==========================================================================
