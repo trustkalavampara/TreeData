@@ -202,9 +202,24 @@ li.collapsed > .node-container { border: 1px dashed #0056b3; background: #f8fbff
     font-weight: 800;
     color: #2c3e50;
     margin-bottom: 15px;
-    line-height: 1.4;
+    line-height: 1.5;
     border-left: 5px solid #007bff;
-    padding-left: 12px;
+    padding: 5px 12px;
+    background: #f8f9fa; /* Light background to define the area */
+    border-radius: 0 4px 4px 0;
+
+    /* --- BOUNDARY CONTROLS --- */
+    word-wrap: break-word;       /* Standard support */
+    overflow-wrap: break-word;   /* Modern browser support */
+    white-space: normal;         /* Allows wrapping (unlike 'nowrap') */
+    max-width: 100%;             /* Ensures it never exceeds its parent container */
+    display: block;              /* Takes up full width available */
+}
+
+/* Optional: Style the live-typed text specifically to wrap well */
+#hierarchy-path span {
+    display: inline;             /* Keeps it part of the text flow */
+    word-break: break-all;       /* Forces a break even inside long words if needed */
 }
 
 .parent-tile {
