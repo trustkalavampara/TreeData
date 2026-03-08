@@ -284,7 +284,29 @@ button:active { filter: brightness(0.8); }
     border: 4px solid #007bff;
 }
 
-.modal-path { font-size: 1.4rem; font-weight: bold; margin: 20px 0; color: #333; }
+.modal-path {
+    font-size: 1.5rem; /* Slightly smaller than before for better wrapping */
+    font-weight: bold;
+    margin: 20px 0;
+    color: #333;
+    line-height: 1.4;
+    
+    /* Boundary Controls */
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    white-space: normal;
+    text-align: center;
+    padding: 10px;
+    background: #fdfdfd;
+    border: 1px dashed #ccc;
+    border-radius: 8px;
+}
+
+/* Ensure the green highlighted span inside the modal also wraps */
+.modal-path span {
+    word-break: break-all;
+}
+
 .modal-details { font-size: 1.1rem; text-align: left; background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 20px; }
 
 .btn-lg { width: 100%; font-size: 1.4rem; padding: 18px; margin: 5px 0; border-radius: 10px; border: none; font-weight: bold; }
