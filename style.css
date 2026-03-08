@@ -215,6 +215,10 @@ li.collapsed > .node-container { border: 1px dashed #0056b3; background: #f8fbff
     margin-bottom: 20px;
 }
 
+#parent-tile {
+    display: none !important;
+}
+
 .input-group-vertical {
     display: flex;
     flex-direction: column;
