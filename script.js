@@ -87,27 +87,37 @@ function renderTree(node) {
     return li;
 }
 
-// Replace your existing addNode function with this one
 async function addNode() {
     const parentId = document.getElementById('parentId').value;
     const content = document.getElementById('nodeContent').value.trim();
     const phone = document.getElementById('nodePhone').value;
     const description = document.getElementById('nodeDescription').value;
-    const hierarchyPath = document.getElementById('hierarchy-path').innerText;
+    
+    // Get the exact HTML from your live path (which includes the green highlight)
+    const livePathHTML = document.getElementById('hierarchy-path').innerHTML;
 
     if (!content) return alert("Please enter a Title.");
     if (!parentId) return alert("Please select a parent node first.");
 
-    // Prepare Modal Data
-    document.getElementById('modal-path-preview').innerText = `${hierarchyPath} > ${content}`;
-    document.getElementById('modal-phone-preview').innerText = phone ? `📞 Phone: ${phone}` : "";
-    document.getElementById('modal-desc-preview').innerText = description ? `📝 Note: ${description}` : "";
+    // Update Modal Preview
+    // We use innerHTML here so the green underline/color from updateLivePath carries over
+    document.getElementById('modal-path-preview').innerHTML = livePathHTML;
+    
+    // Update Phone and Description (Optional rows)
+    const phonePrev = document.getElementById('modal-phone-preview');
+    const descPrev = document.getElementById('modal-desc-preview');
+    
+    phonePrev.innerText = phone ? `📞 Phone: ${phone}` : "";
+    descPrev.innerText = description ? `📝 Note: ${description}` : "";
+    
+    // Hide details area if both are empty to save space on mobile
+    document.querySelector('.modal-details').style.display = (phone || description) ? 'block' : 'none';
 
     // Show Modal
     const modal = document.getElementById('custom-modal');
     modal.style.display = 'flex';
 
-    // Wait for button click using a Promise
+    // Promise-based button listener
     const confirmed = await new Promise((resolve) => {
         document.getElementById('confirm-yes').onclick = () => { modal.style.display = 'none'; resolve(true); };
         document.getElementById('confirm-no').onclick = () => { modal.style.display = 'none'; resolve(false); };
@@ -115,23 +125,18 @@ async function addNode() {
 
     if (!confirmed) return;
 
-    // Proceed with Fetch
+    // Proceed with Fetch...
     const payload = { Parent_ID: parentId, Content: content, Phone: phone, Description: description };
-    const btn = document.querySelector('button[onclick="addNode()"]');
-    btn.innerText = "Adding...";
-    btn.disabled = true;
-
     try {
         await fetch(GAS_URL, { method: 'POST', body: JSON.stringify(payload) });
+        // Reset fields
         document.getElementById('nodeContent').value = "";
         document.getElementById('nodePhone').value = "";
         document.getElementById('nodeDescription').value = "";
+        document.getElementById('hierarchy-path').innerText = "Select a node...";
         fetchTree();
     } catch (err) {
-        alert("Network Error!");
-    } finally {
-        btn.innerText = "Add to Tree";
-        btn.disabled = false;
+        alert("Submission failed. Please check your connection.");
     }
 }
 
