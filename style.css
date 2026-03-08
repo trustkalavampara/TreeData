@@ -284,22 +284,29 @@ button:active { filter: brightness(0.8); }
     border: 4px solid #007bff;
 }
 
-.modal-path {
-    font-size: 1.5rem; /* Slightly smaller than before for better wrapping */
-    font-weight: bold;
-    margin: 20px 0;
-    color: #333;
-    line-height: 1.4;
+/* Container for the scrollable part of the modal */
+.modal-body-scroll {
+    max-height: 50vh;           /* Limits height to 50% of the screen height */
+    overflow-y: auto;          /* Adds vertical scrollbar only if needed */
+    padding: 10px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    background: #fafafa;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
     
-    /* Boundary Controls */
+    /* Smooth scrolling for mobile */
+    -webkit-overflow-scrolling: touch;
+}
+
+.modal-path {
+    font-size: 1.4rem;
+    font-weight: bold;
+    color: #333;
+    line-height: 1.5;
     word-wrap: break-word;
     overflow-wrap: break-word;
-    white-space: normal;
-    text-align: center;
-    padding: 10px;
-    background: #fdfdfd;
-    border: 1px dashed #ccc;
-    border-radius: 8px;
+    margin: 0; /* Margin handled by the scroll container */
+    text-align: left; /* Easier to read long paths when left-aligned */
 }
 
 /* Ensure the green highlighted span inside the modal also wraps */
@@ -308,6 +315,11 @@ button:active { filter: brightness(0.8); }
 }
 
 .modal-details { font-size: 1.1rem; text-align: left; background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 20px; }
+.modal-details p {
+    word-wrap: break-word;
+    white-space: pre-wrap; /* Maintains line breaks in descriptions */
+    margin: 10px 0;
+}
 
 .btn-lg { width: 100%; font-size: 1.4rem; padding: 18px; margin: 5px 0; border-radius: 10px; border: none; font-weight: bold; }
 .btn-confirm { background-color: #28a745; color: white; }
