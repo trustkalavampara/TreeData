@@ -10,11 +10,11 @@
     <div class="container">
         <h1>[TreeData] Collaborative Idea Tree</h1>
         
-        <div class="controls">
-            <button onclick="fetchTree()">🔄 Refresh Tree</button>
-            <button class="btn-secondary" onclick="toggleAll(true)">📂 Expand All</button>
-            <button class="btn-secondary" onclick="toggleAll(false)">📁 Collapse All</button>
-        </div>
+            <div class="global-controls">
+                <button class="btn-secondary" onclick="fetchTree()">🔄 Refresh Tree</button>
+                <button class="btn-secondary" onclick="toggleAll(true)">📂 Expand All</button>
+                <button class="btn-secondary" onclick="toggleAll(false)">📁 Collapse All</button>
+            </div>
 
         <div id="tree-container">
             <p>Loading tree...</p>
