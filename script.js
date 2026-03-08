@@ -153,6 +153,9 @@ function selectNode(id, element) {
         // 3. Update the Bold Hierarchy Path
         const path = getPath(id);
         document.getElementById('hierarchy-path').innerText = path.join(" > ");
+
+        // Trigger the live path update now that a new parent is set
+        updateLivePath();
         
         // Optional: Scroll the form into view on mobile
         document.querySelector('.add-node-form').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
@@ -200,4 +203,31 @@ function toggleAll(expand) {
             }
         }
     });
+}
+
+/**
+ * Updates the hierarchy path label in real-time as the user types.
+ */
+function updateLivePath() {
+    const parentId = document.getElementById('parentId').value;
+    const currentInput = document.getElementById('nodeContent').value.trim();
+    const pathDisplay = document.getElementById('hierarchy-path');
+
+    // If no parent is selected yet
+    if (!parentId) {
+        pathDisplay.innerText = "Select a node...";
+        return;
+    }
+
+    // Get the base path of the selected parent
+    const basePaths = getPath(parentId);
+    const basePathString = basePaths.join(" > ");
+
+    // If the user has started typing, append their text with a different style
+    if (currentInput.length > 0) {
+        pathDisplay.innerHTML = `${basePathString} > <span style="color: #28a745; text-decoration: underline;">${currentInput}</span>`;
+    } else {
+        // Otherwise, just show the parent path
+        pathDisplay.innerText = basePathString;
+    }
 }
