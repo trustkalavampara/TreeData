@@ -31,7 +31,7 @@
                 </div>
                 
                 <div class="input-group-vertical">
-                    <input type="text" id="nodeContent" placeholder="Main Idea/Title" required>
+                    <input type="text" id="nodeContent" placeholder="Main Idea/Title" oninput="updateLivePath()" required>
                     <input type="tel" id="nodePhone" placeholder="Phone Number (Optional)">
                     <textarea id="nodeDescription" placeholder="Detailed Description..."></textarea>
                     <button onclick="addNode()">Add to Tree</button>
