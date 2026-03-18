@@ -58,16 +58,35 @@ function renderTree(node) {
             toggle.innerText = isCollapsed ? "[+] " : "[-] ";
         };
     } else {
-        // No children = No button, just a spacer to keep alignment
         toggle.innerHTML = "&nbsp;&nbsp;&nbsp;"; 
         toggle.style.cursor = "default";
     }
     li.appendChild(toggle);
 
-    // 2. Create the Node Text Container
+    // 2. Create the Node Container
     const nodeWrapper = document.createElement('div');
     nodeWrapper.className = "node-container";
-    nodeWrapper.innerHTML = `<span class="node-id">[${node.Node_ID}]</span> ${node.Content}`;
+    
+    // Style adjustments for images
+    nodeWrapper.style.display = "inline-flex";
+    nodeWrapper.style.flexDirection = "column";
+    nodeWrapper.style.alignItems = "flex-start";
+    nodeWrapper.style.verticalAlign = "middle";
+
+    // Build the inner HTML
+    let innerHTML = `<div><span class="node-id">[${node.Node_ID}]</span> ${node.Content}</div>`;
+    
+    // Check if an Image_URL exists and append the <img> tag
+    if (node.Image_URL && node.Image_URL.trim() !== "" && node.Image_URL !== "null") {
+        innerHTML += `
+            <img src="${node.Image_URL}" 
+                 alt="node-img" 
+                 class="node-image"
+                 style="max-width: 120px; max-height: 120px; border-radius: 6px; margin-top: 8px; border: 1px solid #ddd; display: block;"
+                 onerror="this.style.display='none'">`;
+    }
+
+    nodeWrapper.innerHTML = innerHTML;
     
     nodeWrapper.onclick = (e) => {
         e.stopPropagation();
@@ -92,32 +111,54 @@ async function addNode() {
     const content = document.getElementById('nodeContent').value.trim();
     const phone = document.getElementById('nodePhone').value;
     const description = document.getElementById('nodeDescription').value;
+    const fileInput = document.getElementById('nodeImage'); // Make sure your input has this ID
     
-    // Get the exact HTML from your live path (which includes the green highlight)
-    const livePathHTML = document.getElementById('hierarchy-path').innerHTML;
-
+    // Validation
     if (!content) return alert("Please enter a Title.");
     if (!parentId) return alert("Please select a parent node first.");
 
-    // Update Modal Preview
-    // We use innerHTML here so the green underline/color from updateLivePath carries over
+    // 1. Prepare for Image Upload (if file exists)
+    let uploadedImageUrl = "";
+    if (fileInput.files.length > 0) {
+        const file = fileInput.files[0];
+        
+        // Simple client-side size check (2MB limit recommended for Apps Script)
+        if (file.size > 2 * 1024 * 1024) {
+            return alert("Image is too large. Please select a file under 2MB.");
+        }
+
+        try {
+            const base64 = await toBase64(file);
+            // Show a temporary "Uploading..." status on the UI if desired
+            uploadedImageUrl = await new Promise((resolve, reject) => {
+                google.script.run
+                    .withSuccessHandler(resolve)
+                    .withFailureHandler(reject)
+                    .uploadNodeImage(base64, Date.now(), content); 
+                    // Note: We use Date.now() as a temporary ID for naming if the real ID isn't assigned yet
+            });
+        } catch (err) {
+            return alert("Image upload failed: " + err);
+        }
+    }
+
+    // 2. Update Modal Preview
+    const livePathHTML = document.getElementById('hierarchy-path').innerHTML;
     document.getElementById('modal-path-preview').innerHTML = livePathHTML;
     
-    // Update Phone and Description (Optional rows)
     const phonePrev = document.getElementById('modal-phone-preview');
     const descPrev = document.getElementById('modal-desc-preview');
     
     phonePrev.innerText = phone ? `📞 Phone: ${phone}` : "";
     descPrev.innerText = description ? `📝 Note: ${description}` : "";
     
-    // Hide details area if both are empty to save space on mobile
+    // Toggle modal details visibility
     document.querySelector('.modal-details').style.display = (phone || description) ? 'block' : 'none';
 
-    // Show Modal
+    // 3. Show Modal and Wait for Confirmation
     const modal = document.getElementById('custom-modal');
     modal.style.display = 'flex';
 
-    // Promise-based button listener
     const confirmed = await new Promise((resolve) => {
         document.getElementById('confirm-yes').onclick = () => { modal.style.display = 'none'; resolve(true); };
         document.getElementById('confirm-no').onclick = () => { modal.style.display = 'none'; resolve(false); };
@@ -125,20 +166,40 @@ async function addNode() {
 
     if (!confirmed) return;
 
-    // Proceed with Fetch...
-    const payload = { Parent_ID: parentId, Content: content, Phone: phone, Description: description };
+    // 4. Final Save to Spreadsheet
+    const payload = { 
+        Parent_ID: parentId, 
+        Content: content, 
+        Phone: phone, 
+        Description: description,
+        Image_URL: uploadedImageUrl // Our new column data
+    };
+
     try {
         await fetch(GAS_URL, { method: 'POST', body: JSON.stringify(payload) });
+        
         // Reset fields
         document.getElementById('nodeContent').value = "";
         document.getElementById('nodePhone').value = "";
         document.getElementById('nodeDescription').value = "";
+        document.getElementById('nodeImage').value = ""; // Clear file input
         document.getElementById('hierarchy-path').innerText = "Select a node...";
-        fetchTree();
+        
+        fetchTree(); // Refresh the view
     } catch (err) {
         alert("Submission failed. Please check your connection.");
     }
 }
+
+/**
+ * Helper: Convert File to Base64 String
+ */
+const toBase64 = file => new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = error => reject(error);
+});
 
 function selectNode(id, element) {
     // 1. Highlight the node in the tree
