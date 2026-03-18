@@ -1,57 +1,81 @@
+/**
+ * TREE CONFIGURATION
+ * Replace this URL with your "Current Web App URL" from the Google Apps Script Deploy menu.
+ */
 const GAS_URL = "https://script.google.com/macros/s/AKfycbzpGnygs5D7ujnWzSi19R7TZOVrJusPaFsDHvkcd8PCMpUt7PLf2t5GSeUFQyp_pcfsLQ/exec";
 
-// Fetch data on load
+// Global storage for the flat node list
+let allNodesGlobal = []; 
+
+// Initialize on page load
 window.onload = fetchTree;
 
+/**
+ * 1. DATA LOADING
+ * Fetches the flat JSON array from Google Sheets and triggers the render.
+ */
 async function fetchTree() {
     const container = document.getElementById('tree-container');
-    container.innerHTML = "Loading...";
+    container.innerHTML = "<div style='padding:20px; color:#666;'>🌳 Loading Tree Data...</div>";
 
     try {
         const response = await fetch(GAS_URL);
         const data = await response.json();
-        allNodesGlobal = data; // Store for path tracing
+        allNodesGlobal = data; 
         
         container.innerHTML = "";
         const treeRoot = buildTree(data);
-        container.appendChild(renderTree(treeRoot));
+        
+        if (treeRoot) {
+            container.appendChild(renderTree(treeRoot));
+        } else {
+            container.innerHTML = "<div style='color:red;'>No root node found. Please check your sheet.</div>";
+        }
     } catch (err) {
-        container.innerHTML = "Error loading tree.";
+        console.error("Fetch Error:", err);
+        container.innerHTML = "<div style='color:red;'>Error loading tree. Ensure your Web App is deployed and GAS_URL is correct.</div>";
     }
 }
 
-// Logic to transform flat array into nested object
+/**
+ * 2. TREE LOGIC
+ * Converts a flat array into a nested parent-child object.
+ * Forces IDs to Strings to prevent type-matching errors.
+ */
 function buildTree(nodes) {
     const map = {};
     let root = null;
 
     nodes.forEach(node => {
-        map[node.Node_ID] = { ...node, children: [] };
+        map[String(node.Node_ID)] = { ...node, children: [] };
     });
 
     nodes.forEach(node => {
-        if (node.Parent_ID == 0 || !map[node.Parent_ID]) {
-            root = map[node.Node_ID];
+        const parentId = String(node.Parent_ID);
+        if (node.Parent_ID == 0 || !map[parentId]) {
+            if (!root) root = map[String(node.Node_ID)];
         } else {
-            map[node.Parent_ID].children.push(map[node.Node_ID]);
+            map[parentId].children.push(map[String(node.Node_ID)]);
         }
     });
     return root;
 }
 
-// Logic to turn nested object into HTML
+/**
+ * 3. RENDER LOGIC
+ * Recursively builds the HTML list structure with toggle buttons and images.
+ */
 function renderTree(node) {
     if (!node) return document.createTextNode("");
 
     const li = document.createElement('li');
-    
-    // 1. Create the Toggle Button (+/-)
     const hasChildren = node.children && node.children.length > 0;
+    
+    // Toggle Button ([+] / [-])
     const toggle = document.createElement('span');
     toggle.className = "toggle-btn";
-
     if (hasChildren) {
-        toggle.innerText = "[-] "; // Start expanded
+        toggle.innerText = "[-] "; 
         toggle.onclick = (e) => {
             e.stopPropagation();
             const isCollapsed = li.classList.toggle('collapsed');
@@ -63,21 +87,18 @@ function renderTree(node) {
     }
     li.appendChild(toggle);
 
-    // 2. Create the Node Container
+    // Node Container (The clickable box)
     const nodeWrapper = document.createElement('div');
     nodeWrapper.className = "node-container";
-    
-    // Style adjustments for images
     nodeWrapper.style.display = "inline-flex";
     nodeWrapper.style.flexDirection = "column";
     nodeWrapper.style.alignItems = "flex-start";
-    nodeWrapper.style.verticalAlign = "middle";
 
-    // Build the inner HTML
+    // Build Interior Content
     let innerHTML = `<div><span class="node-id">[${node.Node_ID}]</span> ${node.Content}</div>`;
     
-    // Check if an Image_URL exists and append the <img> tag
-    if (node.Image_URL && node.Image_URL.trim() !== "" && node.Image_URL !== "null") {
+    // Image Display Logic
+    if (node.Image_URL && node.Image_URL.length > 10 && node.Image_URL !== "null") {
         innerHTML += `
             <img src="${node.Image_URL}" 
                  alt="node-img" 
@@ -87,14 +108,13 @@ function renderTree(node) {
     }
 
     nodeWrapper.innerHTML = innerHTML;
-    
     nodeWrapper.onclick = (e) => {
         e.stopPropagation();
         selectNode(node.Node_ID, nodeWrapper);
     };
     li.appendChild(nodeWrapper);
 
-    // 3. Recursively add children
+    // Recursive Children Rendering
     if (hasChildren) {
         const ul = document.createElement('ul');
         node.children.forEach(child => {
@@ -102,12 +122,13 @@ function renderTree(node) {
         });
         li.appendChild(ul);
     }
-
     return li;
 }
 
-
-
+/**
+ * 4. FORM SUBMISSION
+ * Bundles text and image data into a single POST request.
+ */
 async function addNode() {
     const parentId = document.getElementById('parentId').value;
     const content = document.getElementById('nodeContent').value.trim();
@@ -115,38 +136,28 @@ async function addNode() {
     const description = document.getElementById('nodeDescription').value;
     const fileInput = document.getElementById('nodeImage'); 
     
-    // Validation
     if (!content) return alert("Please enter a Title.");
-    if (!parentId) return alert("Please select a parent node first.");
+    if (!parentId) return alert("Please select a parent node from the tree first.");
 
-    // 1. Convert Image to Base64 (if file exists)
+    // Handle Image Conversion
     let base64Image = "";
     if (fileInput.files.length > 0) {
         const file = fileInput.files[0];
-        // Optional: Check size (Apps Script POST limit is usually 10MB-50MB)
-        if (file.size > 5 * 1024 * 1024) {
-            return alert("Image is too large. Please select a file under 5MB.");
-        }
+        if (file.size > 5 * 1024 * 1024) return alert("File too large. Max 5MB allowed.");
         try {
             base64Image = await toBase64(file);
         } catch (err) {
-            return alert("Failed to read image file.");
+            return alert("Failed to process image file.");
         }
     }
 
-    // 2. Update Modal Preview
-    const livePathHTML = document.getElementById('hierarchy-path').innerHTML;
-    document.getElementById('modal-path-preview').innerHTML = livePathHTML;
-    
-    const phonePrev = document.getElementById('modal-phone-preview');
-    const descPrev = document.getElementById('modal-desc-preview');
-    
-    phonePrev.innerText = phone ? `📞 Phone: ${phone}` : "";
-    descPrev.innerText = description ? `📝 Note: ${description}` : "";
-    
+    // Modal Confirmation Preview
+    const pathPreview = document.getElementById('hierarchy-path').innerHTML;
+    document.getElementById('modal-path-preview').innerHTML = pathPreview;
+    document.getElementById('modal-phone-preview').innerText = phone ? `📞 Phone: ${phone}` : "";
+    document.getElementById('modal-desc-preview').innerText = description ? `📝 Note: ${description}` : "";
     document.querySelector('.modal-details').style.display = (phone || description) ? 'block' : 'none';
 
-    // 3. Show Modal and Wait for Confirmation
     const modal = document.getElementById('custom-modal');
     modal.style.display = 'flex';
 
@@ -157,45 +168,46 @@ async function addNode() {
 
     if (!confirmed) return;
 
-    // 4. Final Save (Sending everything in one payload)
+    // Send Everything to Apps Script
     const payload = { 
         Parent_ID: parentId, 
         Content: content, 
         Phone: phone, 
         Description: description,
-        Image_Base64: base64Image // Handled internally by the updated doPost(e)
+        Image_Base64: base64Image 
     };
 
     try {
-        // Show a loading state if possible here
         const response = await fetch(GAS_URL, { 
             method: 'POST', 
             body: JSON.stringify(payload) 
         });
-        
         const result = await response.json();
 
         if (result.status === "success") {
-            // Reset fields
+            // Reset UI
             document.getElementById('nodeContent').value = "";
             document.getElementById('nodePhone').value = "";
             document.getElementById('nodeDescription').value = "";
             document.getElementById('nodeImage').value = ""; 
+            document.getElementById('parentId').value = "";
+            document.getElementById('parent-tile-text').innerText = "None Selected";
             document.getElementById('hierarchy-path').innerText = "Select a node...";
             
-            fetchTree(); // Refresh the view
+            fetchTree(); // Refresh tree view
         } else {
-            alert("Error from server: " + result.message);
+            alert("Server Error: " + result.message);
         }
     } catch (err) {
-        alert("Submission failed. Check your GAS_URL and ensure it is deployed as a Web App.");
+        alert("Submission failed. Check your internet connection or Web App Deployment.");
     }
 }
 
 /**
- * Helper: Convert File to Base64 String
- * Ensure this function exists in your script
+ * UTILITY FUNCTIONS
  */
+
+// Helper to convert Image to String
 const toBase64 = file => new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.readAsDataURL(file);
@@ -203,54 +215,30 @@ const toBase64 = file => new Promise((resolve, reject) => {
     reader.onerror = error => reject(error);
 });
 
-/**
- * Helper: Convert File to Base64 String
- */
-const toBase64 = file => new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = () => resolve(reader.result);
-    reader.onerror = error => reject(error);
-});
-
+// Handles selecting a node to be a parent
 function selectNode(id, element) {
-    // 1. Highlight the node in the tree
     document.querySelectorAll('.node-container').forEach(el => el.classList.remove('node-active'));
     element.classList.add('node-active');
 
-    // 2. Find the node data (Force ID to a Number for a clean match)
-    const selectedNode = allNodesGlobal.find(n => Number(n.Node_ID) === Number(id));
+    const selectedNode = allNodesGlobal.find(n => String(n.Node_ID) === String(id));
     
     if (selectedNode) {
-        // Update the Hidden Input for the API call
         document.getElementById('parentId').value = id;
-
-        // Update the Visible Tile with the actual Content
         document.getElementById('parent-tile-text').innerText = selectedNode.Content;
-
-        // 3. Update the Bold Hierarchy Path
         const path = getPath(id);
         document.getElementById('hierarchy-path').innerText = path.join(" > ");
-
-        // Trigger the live path update now that a new parent is set
         updateLivePath();
-        
-        // Optional: Scroll the form into view on mobile
-        document.querySelector('.add-node-form').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-    } else {
-        console.error("Node not found in global data for ID:", id);
     }
 }
 
-// Recursive helper to find the path from Root to Node
+// Recursive helper to trace path back to root
 function getPath(targetId) {
     let path = [];
     let currentId = targetId;
-
     while (currentId != 0) {
-        const node = allNodesGlobal.find(n => n.Node_ID == currentId);
+        const node = allNodesGlobal.find(n => String(n.Node_ID) === String(currentId));
         if (node) {
-            path.unshift(node.Content); // Add to beginning
+            path.unshift(node.Content);
             currentId = node.Parent_ID;
         } else {
             break;
@@ -259,53 +247,40 @@ function getPath(targetId) {
     return path;
 }
 
-
-/**
- * Global Expand/Collapse Toggle
- * @param {boolean} expand - True to show all, False to hide all
- */
+// Global toggle for Expand/Collapse
 function toggleAll(expand) {
-    const listItems = document.querySelectorAll('#tree-container li');
-    
-    listItems.forEach(li => {
-        const toggleBtn = li.querySelector('.toggle-btn');
-        const hasChildren = li.querySelector('ul');
-
-        if (hasChildren && toggleBtn) {
+    document.querySelectorAll('#tree-container li').forEach(li => {
+        const btn = li.querySelector('.toggle-btn');
+        const hasUl = li.querySelector('ul');
+        if (hasUl && btn) {
             if (expand) {
                 li.classList.remove('collapsed');
-                toggleBtn.innerText = "[-] ";
+                btn.innerText = "[-] ";
             } else {
                 li.classList.add('collapsed');
-                toggleBtn.innerText = "[+] ";
+                btn.innerText = "[+] ";
             }
         }
     });
 }
 
-/**
- * Updates the hierarchy path label in real-time as the user types.
- */
+// Updates the green "typing preview" in the path label
 function updateLivePath() {
     const parentId = document.getElementById('parentId').value;
     const currentInput = document.getElementById('nodeContent').value.trim();
     const pathDisplay = document.getElementById('hierarchy-path');
 
-    // If no parent is selected yet
     if (!parentId) {
         pathDisplay.innerText = "Select a node...";
         return;
     }
 
-    // Get the base path of the selected parent
     const basePaths = getPath(parentId);
     const basePathString = basePaths.join(" > ");
 
-    // If the user has started typing, append their text with a different style
     if (currentInput.length > 0) {
         pathDisplay.innerHTML = `${basePathString} > <span style="color: #28a745; text-decoration: underline;">${currentInput}</span>`;
     } else {
-        // Otherwise, just show the parent path
         pathDisplay.innerText = basePathString;
     }
 }
