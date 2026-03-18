@@ -119,28 +119,32 @@ async function addNode() {
 
     // 1. Prepare for Image Upload (if file exists)
     let uploadedImageUrl = "";
+    
     if (fileInput.files.length > 0) {
-        const file = fileInput.files[0];
-        
-        // Simple client-side size check (2MB limit recommended for Apps Script)
-        if (file.size > 2 * 1024 * 1024) {
-            return alert("Image is too large. Please select a file under 2MB.");
-        }
-
-        try {
+            // CHECK: Is the Google library ready?
+            if (typeof google === 'undefined' || !google.script || !google.script.run) {
+                console.error("Google Script Run is not available.");
+                return alert("Error: Cannot upload image. This feature only works when the app is deployed as a Google Web App.");
+            }
+    
+            const file = fileInput.files[0];
             const base64 = await toBase64(file);
-            // Show a temporary "Uploading..." status on the UI if desired
-            uploadedImageUrl = await new Promise((resolve, reject) => {
-                google.script.run
-                    .withSuccessHandler(resolve)
-                    .withFailureHandler(reject)
-                    .uploadNodeImage(base64, Date.now(), content); 
-                    // Note: We use Date.now() as a temporary ID for naming if the real ID isn't assigned yet
-            });
-        } catch (err) {
-            return alert("Image upload failed: " + err);
+    
+            try {
+                // THE CALL
+                uploadedImageUrl = await new Promise((resolve, reject) => {
+                    google.script.run
+                        .withSuccessHandler(resolve)
+                        .withFailureHandler(err => {
+                            console.error("GAS Error:", err);
+                            reject(err);
+                        })
+                        .uploadNodeImage(base64, Date.now(), content);
+                });
+            } catch (err) {
+                return alert("Image upload failed at the server: " + err);
+            }
         }
-    }
 
     // 2. Update Modal Preview
     const livePathHTML = document.getElementById('hierarchy-path').innerHTML;
