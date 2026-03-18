@@ -106,45 +106,33 @@ function renderTree(node) {
     return li;
 }
 
+
+
 async function addNode() {
     const parentId = document.getElementById('parentId').value;
     const content = document.getElementById('nodeContent').value.trim();
     const phone = document.getElementById('nodePhone').value;
     const description = document.getElementById('nodeDescription').value;
-    const fileInput = document.getElementById('nodeImage'); // Make sure your input has this ID
+    const fileInput = document.getElementById('nodeImage'); 
     
     // Validation
     if (!content) return alert("Please enter a Title.");
     if (!parentId) return alert("Please select a parent node first.");
 
-    // 1. Prepare for Image Upload (if file exists)
-    let uploadedImageUrl = "";
-    
+    // 1. Convert Image to Base64 (if file exists)
+    let base64Image = "";
     if (fileInput.files.length > 0) {
-            // CHECK: Is the Google library ready?
-            if (typeof google === 'undefined' || !google.script || !google.script.run) {
-                console.error("Google Script Run is not available.");
-                return alert("Error: Cannot upload image. This feature only works when the app is deployed as a Google Web App.");
-            }
-    
-            const file = fileInput.files[0];
-            const base64 = await toBase64(file);
-    
-            try {
-                // THE CALL
-                uploadedImageUrl = await new Promise((resolve, reject) => {
-                    google.script.run
-                        .withSuccessHandler(resolve)
-                        .withFailureHandler(err => {
-                            console.error("GAS Error:", err);
-                            reject(err);
-                        })
-                        .uploadNodeImage(base64, Date.now(), content);
-                });
-            } catch (err) {
-                return alert("Image upload failed at the server: " + err);
-            }
+        const file = fileInput.files[0];
+        // Optional: Check size (Apps Script POST limit is usually 10MB-50MB)
+        if (file.size > 5 * 1024 * 1024) {
+            return alert("Image is too large. Please select a file under 5MB.");
         }
+        try {
+            base64Image = await toBase64(file);
+        } catch (err) {
+            return alert("Failed to read image file.");
+        }
+    }
 
     // 2. Update Modal Preview
     const livePathHTML = document.getElementById('hierarchy-path').innerHTML;
@@ -156,7 +144,6 @@ async function addNode() {
     phonePrev.innerText = phone ? `📞 Phone: ${phone}` : "";
     descPrev.innerText = description ? `📝 Note: ${description}` : "";
     
-    // Toggle modal details visibility
     document.querySelector('.modal-details').style.display = (phone || description) ? 'block' : 'none';
 
     // 3. Show Modal and Wait for Confirmation
@@ -170,30 +157,51 @@ async function addNode() {
 
     if (!confirmed) return;
 
-    // 4. Final Save to Spreadsheet
+    // 4. Final Save (Sending everything in one payload)
     const payload = { 
         Parent_ID: parentId, 
         Content: content, 
         Phone: phone, 
         Description: description,
-        Image_URL: uploadedImageUrl // Our new column data
+        Image_Base64: base64Image // Handled internally by the updated doPost(e)
     };
 
     try {
-        await fetch(GAS_URL, { method: 'POST', body: JSON.stringify(payload) });
+        // Show a loading state if possible here
+        const response = await fetch(GAS_URL, { 
+            method: 'POST', 
+            body: JSON.stringify(payload) 
+        });
         
-        // Reset fields
-        document.getElementById('nodeContent').value = "";
-        document.getElementById('nodePhone').value = "";
-        document.getElementById('nodeDescription').value = "";
-        document.getElementById('nodeImage').value = ""; // Clear file input
-        document.getElementById('hierarchy-path').innerText = "Select a node...";
-        
-        fetchTree(); // Refresh the view
+        const result = await response.json();
+
+        if (result.status === "success") {
+            // Reset fields
+            document.getElementById('nodeContent').value = "";
+            document.getElementById('nodePhone').value = "";
+            document.getElementById('nodeDescription').value = "";
+            document.getElementById('nodeImage').value = ""; 
+            document.getElementById('hierarchy-path').innerText = "Select a node...";
+            
+            fetchTree(); // Refresh the view
+        } else {
+            alert("Error from server: " + result.message);
+        }
     } catch (err) {
-        alert("Submission failed. Please check your connection.");
+        alert("Submission failed. Check your GAS_URL and ensure it is deployed as a Web App.");
     }
 }
+
+/**
+ * Helper: Convert File to Base64 String
+ * Ensure this function exists in your script
+ */
+const toBase64 = file => new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = error => reject(error);
+});
 
 /**
  * Helper: Convert File to Base64 String
