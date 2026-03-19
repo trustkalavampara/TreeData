@@ -75,7 +75,7 @@ function renderTree(node) {
     const li = document.createElement('li');
     const hasChildren = node.children && node.children.length > 0;
     
-    // 1. Toggle Button ([+] / [-])
+    // 1. Toggle Button
     const toggle = document.createElement('span');
     toggle.className = "toggle-btn";
     if (hasChildren) {
@@ -87,44 +87,26 @@ function renderTree(node) {
         };
     } else {
         toggle.innerHTML = "&nbsp;&nbsp;&nbsp;"; 
-        toggle.style.cursor = "default";
     }
     li.appendChild(toggle);
 
-    // 2. Node Container (Flexbox Row Layout)
+    // 2. Node Container
     const nodeWrapper = document.createElement('div');
     nodeWrapper.className = "node-container";
     
-    // Apply Compact Flexbox styles
-    nodeWrapper.style.display = "inline-flex";
-    nodeWrapper.style.flexDirection = "row";
-    nodeWrapper.style.alignItems = "center";
-    nodeWrapper.style.gap = "10px";
-    nodeWrapper.style.padding = "4px 8px";
-    nodeWrapper.style.verticalAlign = "middle";
-    nodeWrapper.style.borderRadius = "6px";
-
-    // Image Logic (Fixed 45px Square + Referrer fix)
     let imageHTML = "";
     if (node.Image_URL && node.Image_URL.length > 10 && node.Image_URL !== "null") {
-        imageHTML = `
-            <img src="${node.Image_URL}" 
-                 referrerpolicy="no-referrer"
-                 alt="node-img" 
-                 class="node-image"
-                 style="width: 64px; height: 64px; object-fit: cover; border-radius: 4px; border: 1px solid #ddd; flex-shrink: 0;"
-                 onerror="this.style.display='none'">`;
+        imageHTML = `<img src="${node.Image_URL}" referrerpolicy="no-referrer" class="node-image" style="width: 64px; height: 64px; object-fit: cover; border-radius: 4px; border: 1px solid #ddd; flex-shrink: 0;">`;
     } else {
-      imageHTML = `<div class="node-placeholder" style="width: 64px; height: 64px; background: #f5f5f5; border-radius: 4px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; color: #ddd; font-size: 8px; border: 1px dashed #ccc;">No Img</div>`;
+        imageHTML = `<div class="node-placeholder" style="width: 64px; height: 64px; background: #f5f5f5; border-radius: 4px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; color: #ccc; font-size: 10px; border: 1px dashed #ccc;">No Img</div>`;
     }
 
-    // Combine Image and Text
     nodeWrapper.innerHTML = `
         ${imageHTML}
-            <div style="display: flex; flex-direction: column; text-align: left; justify-content: center;">
-                <div style="font-size: 0.7rem; color: #999; font-weight: bold; margin-bottom: 2px;">#${node.Node_ID}</div>
-                <div style="font-size: 0.9rem; color: #333; line-height: 1.2; font-weight: 500;">${node.Content}</div>
-            </div>
+        <div style="display: flex; flex-direction: column;">
+            <div style="font-size: 0.7rem; color: #999; font-weight: bold;">#${node.Node_ID}</div>
+            <div style="font-size: 0.9rem; color: #333; font-weight: 500;">${node.Content}</div>
+        </div>
     `;
     
     nodeWrapper.onclick = (e) => {
@@ -133,12 +115,15 @@ function renderTree(node) {
     };
     li.appendChild(nodeWrapper);
 
-    // 3. Recursive Children Rendering
+    // 3. Clearfix for the float
+    const spacer = document.createElement('div');
+    spacer.style.clear = "both";
+    li.appendChild(spacer);
+
+    // 4. Children
     if (hasChildren) {
         const ul = document.createElement('ul');
-        node.children.forEach(child => {
-            ul.appendChild(renderTree(child));
-        });
+        node.children.forEach(child => ul.appendChild(renderTree(child)));
         li.appendChild(ul);
     }
     return li;
@@ -151,7 +136,6 @@ function renderTree(node) {
 function updateImageVisibility() {
     const isChecked = document.getElementById('imageToggle').checked;
     const container = document.getElementById('tree-container');
-    
     if (isChecked) {
         container.classList.remove('hide-images');
     } else {
