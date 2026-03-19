@@ -152,7 +152,6 @@ function updateImageVisibility() {
     const isChecked = document.getElementById('imageToggle').checked;
     const container = document.getElementById('tree-container');
     
-    // Create/Update a style tag to adjust the line position dynamically
     let lineStyle = document.getElementById('dynamic-line-style');
     if (!lineStyle) {
         lineStyle = document.createElement('style');
@@ -162,17 +161,17 @@ function updateImageVisibility() {
 
     if (isChecked) {
         container.classList.remove('hide-images');
-        // Standard position for 64px images
+        // Aligning to 64px image center + padding
         lineStyle.innerHTML = `
-            #tree-container ul li::after { top: 36px; } 
-            #tree-container ul li:last-child::before { height: 36px; }
+            #tree-container ul li::after { top: 42px; } 
+            #tree-container ul li:last-child::before { height: 52px; }
         `;
     } else {
         container.classList.add('hide-images');
-        // Compact position for text-only mode
+        // Aligning to text-only node center + padding
         lineStyle.innerHTML = `
-            #tree-container ul li::after { top: 18px; } 
-            #tree-container ul li:last-child::before { height: 18px; }
+            #tree-container ul li::after { top: 22px; } 
+            #tree-container ul li:last-child::before { height: 32px; }
         `;
     }
 }
