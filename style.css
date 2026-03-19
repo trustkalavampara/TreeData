@@ -51,7 +51,7 @@ body {
 }
 
 /* ==========================================================================
-   3. TREE STRUCTURE & CONNECTORS (Final Bottom Extension +12px)
+   3. TREE STRUCTURE & CONNECTORS
    ========================================================================== */
 #tree-container {
     overflow-x: auto;
@@ -80,15 +80,14 @@ body {
     width: max-content;
 }
 
-/* THE VERTICAL SPINE */
+/* THE VERTICAL SPINE (The Final Handshake) */
 #tree-container ul li::before {
     content: "";
     position: absolute;
-    /* Top remains at -25px to cover the top-side gap */
     top: -25px; 
     left: -16px; 
     width: 2px;
-    /* NEW HEIGHT: 100% + 25px (top) + 34px (total bottom extension) = 59px */
+    /* THE FIX: 100% of LI height + 64px extension to bridge image gaps */
     height: calc(100% + 64px); 
     background: #888;
     z-index: 1;
@@ -107,20 +106,19 @@ body {
     z-index: 1;
 }
 
-/* THE TAIL CUTTER */
+/* THE TAIL CUTTER: Stops the line at the last horizontal branch */
 #tree-container ul li:last-child::before {
     top: -25px;
-    /* Keeps the last branch clean - stops at its own horizontal hook */
+    /* (25px offset) + (24px hook center) = 49px */
     height: 49px; 
 }
 
-/* ROOT EXCEPTION */
+/* ROOT EXCEPTION: No lines for the very first node */
 #tree-container > ul > li::before,
 #tree-container > ul > li::after {
     display: none !important;
 }
 
-/* The Row that aligns Toggle and Node */
 .tree-row {
     display: flex;
     flex-direction: row;
@@ -150,21 +148,17 @@ body {
     border-color: #007bff;
 }
 
-/* Selected State */
 .node-active {
     background-color: #007bff !important;
     border-color: #0056b3 !important;
 }
 
-.node-active div, 
-.node-active span,
 .node-active .node-id,
 .node-active .node-content {
     color: #ffffff !important;
     font-weight: bold !important;
 }
 
-/* Image/Placeholder Handling */
 .node-image {
     width: 64px;
     height: 64px;
@@ -188,15 +182,12 @@ body {
     border: 1px dashed #ccc;
 }
 
-/* Visibility Toggle */
 #tree-container.hide-images .node-image, 
 #tree-container.hide-images .node-placeholder {
     display: none !important;
 }
 
-#tree-container.hide-images .node-container {
-    gap: 0;
-}
+#tree-container.hide-images .node-container { gap: 0; }
 
 /* ==========================================================================
    5. INTERACTIVE BUTTONS & FORMS
@@ -254,7 +245,6 @@ li.collapsed > ul { display: none !important; }
 .modal-body-scroll {
     max-height: 50vh;
     overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
 }
 
 .input-group-vertical {
