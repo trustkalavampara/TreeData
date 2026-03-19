@@ -134,6 +134,12 @@ body {
     display: none;
 }
 
+/* Hide images and placeholders when the parent has this class */
+#tree-container.hide-images .node-image, 
+#tree-container.hide-images .node-placeholder {
+    display: none !important;
+}
+
 /* ==========================================================================
    4. NODE INTERACTIVE ELEMENTS (Touch Optimized)
    ========================================================================== */
