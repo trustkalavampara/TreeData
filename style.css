@@ -68,92 +68,87 @@ body {
     transform: translateY(0);
 }
 
-/* ==========================================================================
-   3. TREE STRUCTURE (The "Bulletproof" Connector Fix)
-   ========================================================================== */
-
-/* ==========================================================================
-   3. TREE STRUCTURE (Top-Anchored Connector Logic)
+/* ==========================================================================$
+   3. TREE STRUCTURE (The Final Alignment Fix)
    ========================================================================== */
 
 #tree-container ul {
     list-style-type: none;
-    padding-left: 30px; 
+    padding-left: 35px; 
     position: relative;
     margin: 0;
 }
 
 #tree-container li {
     margin: 0;
-    padding: 0; /* Padding moved to children for line accuracy */
+    padding: 0;
     position: relative;
     display: block;
 }
 
-/**
- * THE VERTICAL SPINE
- * Starts at top: 0 and height: 100% to ensure NO GAPS between parents and children.
- */
+/* THE VERTICAL SPINE: Continuous from top to bottom */
 #tree-container ul li::before {
     content: "";
     position: absolute;
     top: 0;
-    left: -15px; /* Half of the 30px padding */
+    left: -20px; 
     width: 2px;
     height: 100%;
     background: #888;
+    z-index: 1;
 }
 
-/**
- * THE HORIZONTAL BRANCH
- * Fixed at 32px from the top. This aligns with the center of the 64px tall toggle area.
- */
+/* THE HORIZONTAL HOOK: Always points to the middle of the toggle */
 #tree-container li::after {
     content: "";
     position: absolute;
-    top: 32px; 
-    left: -15px;      
-    width: 15px;      
+    top: 24px;   /* Fixed anchor point */
+    left: -20px;      
+    width: 20px;      
     height: 2px;
     background: #888;
+    z-index: 1;
 }
 
-/**
- * TAIL CUTTER
- * Stops the line exactly at the last horizontal branch.
- */
+/* TAIL CUTTER: Stops the line at the last child's hook */
 #tree-container ul li:last-child::before {
-    height: 32px; /* Must match the 'top' value of the horizontal branch */
+    height: 24px; 
 }
 
-/**
- * ROOT LEVEL EXCEPTIONS
- * No lines for the very first node.
- */
+/* ROOT EXCEPTION */
 #tree-container > ul > li::before, 
 #tree-container > ul > li::after {
     display: none !important;
 }
 
-/* Ensure the toggle button is tall enough to be the 'anchor' */
+/* THE TOGGLE BUTTON: Now acts as a fixed-size anchor */
 .toggle-btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     width: 30px;
-    height: 64px; /* Matches the line anchor logic */
+    height: 48px; /* Fixed height for line alignment */
     cursor: pointer;
-    background: white; /* Masks the line behind it */
+    background: white;
     position: relative;
-    z-index: 2;
-    vertical-align: top;
+    z-index: 5;
+    float: left; /* Keeps it to the left of the content */
 }
 
-/* Node container must align with the top of the toggle */
+/* THE NODE WRAPPER: Side-by-side with toggle */
 .node-container {
-    display: inline-flex !important;
-    vertical-align: top;
-    margin-top: 0; 
+    display: flex !important;
+    align-items: center;
+    gap: 12px;
+    padding: 5px 10px;
+    min-height: 48px;
+    cursor: pointer;
+}
+
+/* HIDE IMAGES LOGIC */
+#tree-container.hide-images .node-image, 
+#tree-container.hide-images .node-placeholder {
+    display: none !important;
 }
 
 
