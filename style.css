@@ -96,14 +96,22 @@ body {
 }
 
 /* The Parent LI becomes the flex container */
+/* Keep LI as a block so children (UL) fall underneath */
 #tree-container li {
     margin: 0;
-    padding: 8px 0;
-    display: flex;          /* THE FIX: Align children in a row */
-    flex-direction: row;    
-    align-items: center;    /* THE FIX: Vertically centers the toggle with the node */
+    padding: 4px 0;
+    list-style: none;
+    display: block; 
     position: relative;
     width: max-content;
+}
+
+/* NEW: This container specifically aligns the Toggle and the Node Box */
+.tree-row {
+    display: flex;
+    flex-direction: row;
+    align-items: center; /* Vertically centers the toggle with the 64px box */
+    gap: 12px;
 }
 
 /* When images are hidden, completely remove them from the layout */
@@ -120,15 +128,13 @@ body {
 
 /* Ensure the node content stays on one line */
 .node-container {
-    display: inline-flex;    /* Keeps Image + Text in a row */
+    display: inline-flex !important;
     align-items: center;
     gap: 12px;
-    background: #fff;
+    padding: 8px 12px;
     border: 1px solid #ddd;
     border-radius: 8px;
-    padding: 8px 12px;
-    cursor: pointer;
-    transition: background 0.2s;
+    background: white;
 }
 
 .node-container:hover {
@@ -210,14 +216,12 @@ body {
     width: 28px;
     height: 28px;
     cursor: pointer;
-    font-family: monospace;
-    font-weight: bold;
     background: #fff;
     border: 1px solid #ddd;
     border-radius: 4px;
-    margin-right: 12px;     /* Gap between button and the node box */
-    z-index: 5;             /* Keeps it above connecting lines */
-    flex-shrink: 0;         /* Prevents the button from squishing */
+    flex-shrink: 0;
+    font-weight: bold;
+    z-index: 5;
 }
 
 .toggle-btn:hover {
