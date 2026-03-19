@@ -68,54 +68,47 @@ body {
     transform: translateY(0);
 }
 
-/* ==========================================================================
-   3. TREE STRUCTURE (Responsive & Connectors) - Gap & Alignment Fix
+/* ==========================================================================#
+   3. TREE STRUCTURE (Connector Alignment Fix)
    ========================================================================== */
-
-#tree-container {
-    overflow-x: auto;
-    padding-bottom: 20px;
-    -webkit-overflow-scrolling: touch;
-}
 
 #tree-container ul {
     list-style-type: none;
-    padding-left: 30px; 
+    padding-left: 35px; /* Increased padding to give lines more room */
     position: relative;
     margin: 0;
-    min-width: max-content;
 }
 
 #tree-container li {
     margin: 0;
-    padding: 10px 0; /* Vertical spacing between nodes */
+    padding: 12px 0; /* Consistent vertical spacing */
     position: relative;
     display: block;
 }
 
 /**
- * THE VERTICAL SPINE (The Connection Fix)
- * We use top: -10px and height calculation to ensure 
- * this segment overlaps with the segment above it.
+ * THE VERTICAL SPINE
+ * Starts from the very top of the LI to ensure no gaps between siblings.
  */
 #tree-container ul li::before {
     content: "";
     position: absolute;
-    top: -10px;        /* Moves the line UP to touch the previous node */
-    left: -20px;
+    top: 0;
+    left: -20px; 
     width: 2px;
-    height: calc(100% + 20px); /* Stretches to cover the padding gap */
+    height: 100%;
     background: #888;
 }
 
 /**
  * THE HORIZONTAL BRANCH
- * Anchored to align with the middle of the 64px image.
+ * Aligned to the vertical center of the toggle-btn (approx 22px from top).
+ * This remains constant whether images are shown or hidden.
  */
 #tree-container li::after {
     content: "";
     position: absolute;
-    top: 42px;         /* 32px (half of image) + 10px (padding) */
+    top: 22px;         /* Center-point of the [+] / [-] button */
     left: -20px;      
     width: 20px;      
     height: 2px;
@@ -124,12 +117,10 @@ body {
 
 /**
  * TAIL CUTTER
- * Stops the line at the last horizontal branch.
- * We remove the 'top' offset here to ground it.
+ * Stops the line at the last horizontal branch of the branch.
  */
 #tree-container ul li:last-child::before {
-    top: -10px;
-    height: 52px;      /* 42px (top position) + 10px (top offset) */
+    height: 22px;      /* Matches the 'top' of the horizontal branch */
 }
 
 /**
@@ -140,10 +131,19 @@ body {
     display: none;
 }
 
-/* Hide images and placeholders */
-#tree-container.hide-images .node-image, 
-#tree-container.hide-images .node-placeholder {
-    display: none !important;
+/* Ensure the toggle button is positioned to hide the line behind it */
+.toggle-btn {
+    position: relative;
+    z-index: 5;
+    background: white;
+    padding-right: 5px;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+/* The node container itself needs to be inline to touch the line */
+.node-container {
+    vertical-align: middle;
 }
 
 /* ==========================================================================
