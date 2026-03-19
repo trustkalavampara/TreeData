@@ -136,7 +136,7 @@ body {
     flex-direction: row;
     align-items: center; 
     /* Reduced from 12px to 6px for a tighter look */
-    gap: 6px; 
+    gap: 0px; 
     position: relative;
     min-height: 32px; 
 }
