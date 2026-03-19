@@ -75,7 +75,11 @@ function renderTree(node) {
     const li = document.createElement('li');
     const hasChildren = node.children && node.children.length > 0;
     
-    // 1. Toggle Button
+    // --- 1. NEW: The Row Wrapper for Vertical Alignment ---
+    const treeRow = document.createElement('div');
+    treeRow.className = "tree-row";
+
+    // --- 2. Toggle Button ---
     const toggle = document.createElement('span');
     toggle.className = "toggle-btn";
     if (hasChildren) {
@@ -86,11 +90,11 @@ function renderTree(node) {
             toggle.innerText = isCollapsed ? "[+] " : "[-] ";
         };
     } else {
-        toggle.innerHTML = "&nbsp;&nbsp;&nbsp;"; 
+        toggle.innerHTML = "&nbsp;&nbsp;"; // Space for leaf nodes
+        toggle.style.cursor = "default";
     }
-    li.appendChild(toggle);
 
-    // 2. Node Container
+    // --- 3. Node Container ---
     const nodeWrapper = document.createElement('div');
     nodeWrapper.className = "node-container";
     
@@ -103,9 +107,9 @@ function renderTree(node) {
 
     nodeWrapper.innerHTML = `
         ${imageHTML}
-        <div style="display: flex; flex-direction: column;">
-            <div style="font-size: 0.7rem; color: #999; font-weight: bold;">#${node.Node_ID}</div>
-            <div style="font-size: 0.9rem; color: #333; font-weight: 500;">${node.Content}</div>
+        <div style="display: flex; flex-direction: column; text-align: left;">
+            <div class="node-id" style="font-size: 0.7rem; color: #999; font-weight: bold;">#${node.Node_ID}</div>
+            <div class="node-content" style="font-size: 0.9rem; color: #333; font-weight: 500;">${node.Content}</div>
         </div>
     `;
     
@@ -113,19 +117,22 @@ function renderTree(node) {
         e.stopPropagation();
         selectNode(node.Node_ID, nodeWrapper);
     };
-    li.appendChild(nodeWrapper);
 
-    // 3. Clearfix for the float
-    const spacer = document.createElement('div');
-    spacer.style.clear = "both";
-    li.appendChild(spacer);
+    // --- 4. Assembly ---
+    // Add Toggle and Node to the Row
+    treeRow.appendChild(toggle);
+    treeRow.appendChild(nodeWrapper);
+    
+    // Add Row to the List Item
+    li.appendChild(treeRow);
 
-    // 4. Children
+    // --- 5. Children Logic ---
     if (hasChildren) {
         const ul = document.createElement('ul');
         node.children.forEach(child => ul.appendChild(renderTree(child)));
         li.appendChild(ul);
     }
+
     return li;
 }
 
