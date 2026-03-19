@@ -69,7 +69,7 @@ body {
 }
 
 /* ==========================================================================
-   3. TREE STRUCTURE (Responsive & Connectors) - Dynamic Height Fix
+   3. TREE STRUCTURE (Responsive & Connectors) - Gap & Alignment Fix
    ========================================================================== */
 
 #tree-container {
@@ -86,42 +86,36 @@ body {
     min-width: max-content;
 }
 
-/* Remove the old global ul::before vertical line logic */
-#tree-container ul::before {
-    display: none;
-}
-
 #tree-container li {
     margin: 0;
-    padding: 5px 0; /* Tighter vertical spacing */
+    padding: 10px 0; /* Vertical spacing between nodes */
     position: relative;
     display: block;
 }
 
 /**
- * THE VERTICAL SPINE
- * Each LI carries its own piece of the vertical line.
- * It stretches from the top to the very bottom of the LI.
+ * THE VERTICAL SPINE (The Connection Fix)
+ * We use top: -10px and height calculation to ensure 
+ * this segment overlaps with the segment above it.
  */
 #tree-container ul li::before {
     content: "";
     position: absolute;
-    top: 0;
-    left: -20px; /* Positioned in the middle of the 30px padding */
+    top: -10px;        /* Moves the line UP to touch the previous node */
+    left: -20px;
     width: 2px;
-    height: 100%;
+    height: calc(100% + 20px); /* Stretches to cover the padding gap */
     background: #888;
 }
 
 /**
  * THE HORIZONTAL BRANCH
- * Anchored to a fixed 'top' so it always hits the toggle/image center.
- * Default for 64px image: 36px.
+ * Anchored to align with the middle of the 64px image.
  */
 #tree-container li::after {
     content: "";
     position: absolute;
-    top: 36px; 
+    top: 42px;         /* 32px (half of image) + 10px (padding) */
     left: -20px;      
     width: 20px;      
     height: 2px;
@@ -130,22 +124,23 @@ body {
 
 /**
  * TAIL CUTTER
- * Stops the vertical line at the last horizontal branch of the last sibling.
+ * Stops the line at the last horizontal branch.
+ * We remove the 'top' offset here to ground it.
  */
 #tree-container ul li:last-child::before {
-    height: 36px; /* Matches the 'top' value of the horizontal branch */
+    top: -10px;
+    height: 52px;      /* 42px (top position) + 10px (top offset) */
 }
 
 /**
  * ROOT LEVEL EXCEPTIONS
- * The very first node (root) should not have lines.
  */
 #tree-container > ul > li::before, 
 #tree-container > ul > li::after {
     display: none;
 }
 
-/* Hide images and placeholders when the parent has this class */
+/* Hide images and placeholders */
 #tree-container.hide-images .node-image, 
 #tree-container.hide-images .node-placeholder {
     display: none !important;
