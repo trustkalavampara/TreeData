@@ -53,6 +53,9 @@ body {
 /* ==========================================================================
    3. TREE STRUCTURE & CONNECTORS (The Overlap Logic)
    ========================================================================== */
+/* ==========================================================================
+   3. TREE STRUCTURE & CONNECTORS (The Overlap Logic with Image Buffers)
+   ========================================================================== */
 #tree-container {
     overflow-x: auto;
     white-space: nowrap;
@@ -80,16 +83,16 @@ body {
     width: max-content;
 }
 
-/* THE VERTICAL SPINE (The "Overlapping Segment" Fix) */
+/* THE VERTICAL SPINE */
 #tree-container ul li::before {
     content: "";
     position: absolute;
-    /* We move the top up significantly to ensure it touches the node above */
-    top: -20px;
+    /* 1. Adjusted Top: Moved up by an extra 5px */
+    top: -25px; 
     left: -16px; 
     width: 2px;
-    /* THE IMAGE FIX: Height is 100% of the LI + 40px overlap buffer */
-    height: calc(100% + 40px); 
+    /* 2. Adjusted Height: 100% + 25px (top) + 10px (bottom) = 35px extra */
+    height: calc(100% + 35px); 
     background: #888;
     z-index: 1;
 }
@@ -98,7 +101,7 @@ body {
 #tree-container li::after {
     content: "";
     position: absolute;
-    /* Aligns to center of 32px button + 8px li padding = 24px */
+    /* Keeps the hook centered with the 32px toggle button */
     top: 24px;   
     left: -16px;      
     width: 16px;      
@@ -109,8 +112,10 @@ body {
 
 /* THE TAIL CUTTER: Specifically stops at the last child's hook */
 #tree-container ul li:last-child::before {
-    top: -20px;
-    height: 44px; /* (Top offset 20px) + (Hook position 24px) */
+    /* Anchored to the same -25px top */
+    top: -25px;
+    /* Ends exactly at the 24px hook center (25 + 24 = 49px) */
+    height: 49px; 
 }
 
 /* ROOT EXCEPTION: No lines for the very first node */
