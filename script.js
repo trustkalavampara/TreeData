@@ -152,27 +152,14 @@ function updateImageVisibility() {
     const isChecked = document.getElementById('imageToggle').checked;
     const container = document.getElementById('tree-container');
     
-    let lineStyle = document.getElementById('dynamic-line-style');
-    if (!lineStyle) {
-        lineStyle = document.createElement('style');
-        lineStyle.id = 'dynamic-line-style';
-        document.head.appendChild(lineStyle);
-    }
-
+    // We no longer need the 'dynamic-line-style' tag because
+    // our lines are anchored to the toggle button which doesn't move!
+    // But we still toggle the class for the images themselves.
+    
     if (isChecked) {
         container.classList.remove('hide-images');
-        // Aligning to 64px image center + padding
-        lineStyle.innerHTML = `
-            #tree-container ul li::after { top: 42px; } 
-            #tree-container ul li:last-child::before { height: 52px; }
-        `;
     } else {
         container.classList.add('hide-images');
-        // Aligning to text-only node center + padding
-        lineStyle.innerHTML = `
-            #tree-container ul li::after { top: 22px; } 
-            #tree-container ul li:last-child::before { height: 32px; }
-        `;
     }
 }
 
