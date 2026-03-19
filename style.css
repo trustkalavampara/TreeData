@@ -68,82 +68,83 @@ body {
     transform: translateY(0);
 }
 
-/* ==========================================================================#
-   3. TREE STRUCTURE (Connector Alignment Fix)
+/* ==========================================================================
+   3. TREE STRUCTURE (The "Bulletproof" Connector Fix)
    ========================================================================== */
 
 #tree-container ul {
     list-style-type: none;
-    padding-left: 35px; /* Increased padding to give lines more room */
+    padding-left: 32px; 
     position: relative;
     margin: 0;
 }
 
 #tree-container li {
     margin: 0;
-    padding: 12px 0; /* Consistent vertical spacing */
+    padding: 0; /* We move padding to the container for better line hits */
     position: relative;
-    display: block;
+    list-style-type: none;
 }
 
-/**
- * THE VERTICAL SPINE
- * Starts from the very top of the LI to ensure no gaps between siblings.
- */
+/* THE VERTICAL LINE (The Spine) */
 #tree-container ul li::before {
     content: "";
     position: absolute;
     top: 0;
-    left: -20px; 
+    left: -16px; 
     width: 2px;
     height: 100%;
     background: #888;
 }
 
-/**
- * THE HORIZONTAL BRANCH
- * Aligned to the vertical center of the toggle-btn (approx 22px from top).
- * This remains constant whether images are shown or hidden.
- */
+/* THE HORIZONTAL LINE (The Hook) */
 #tree-container li::after {
     content: "";
     position: absolute;
-    top: 22px;         /* Center-point of the [+] / [-] button */
-    left: -20px;      
-    width: 20px;      
+    top: 24px;   /* This is the center of your Toggle Button */
+    left: -16px;      
+    width: 16px;      
     height: 2px;
     background: #888;
 }
 
-/**
- * TAIL CUTTER
- * Stops the line at the last horizontal branch of the branch.
- */
+/* STOP THE LINE at the last child */
 #tree-container ul li:last-child::before {
-    height: 22px;      /* Matches the 'top' of the horizontal branch */
+    height: 24px; /* Matches the 'top' of the horizontal line */
 }
 
-/**
- * ROOT LEVEL EXCEPTIONS
- */
+/* HIDE LINES FOR ROOT */
 #tree-container > ul > li::before, 
 #tree-container > ul > li::after {
-    display: none;
+    display: none !important;
 }
 
-/* Ensure the toggle button is positioned to hide the line behind it */
+/* THE TOGGLE BUTTON - Ensuring it sits on top of the lines */
 .toggle-btn {
-    position: relative;
-    z-index: 5;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 48px; /* Standard height for the line to hit center */
+    cursor: pointer;
     background: white;
-    padding-right: 5px;
-    display: inline-block;
-    vertical-align: middle;
+    position: relative;
+    z-index: 2;
+    font-weight: bold;
+    color: #444;
 }
 
-/* The node container itself needs to be inline to touch the line */
+/* THE NODE WRAPPER - Side by side with Toggle */
 .node-container {
-    vertical-align: middle;
+    display: inline-flex !important;
+    vertical-align: top;
+    margin: 4px 0;
+}
+
+/* HIDE IMAGES LOGIC */
+#tree-container.hide-images .node-image, 
+#tree-container.hide-images .node-placeholder {
+    display: none !important;
 }
 
 /* ==========================================================================
