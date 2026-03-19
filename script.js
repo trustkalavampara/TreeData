@@ -103,24 +103,24 @@ function renderTree(node) {
 
     // Prepare Image Logic (Fixed 70px Square)
     let imageHTML = "";
-        if (node.Image_URL && node.Image_URL.length > 10 && node.Image_URL !== "null") {
-        // 1. Extract the unique File ID from the Google Drive URL
-        const fileIdMatch = node.Image_URL.match(/[-\w]{25,}/);
-        let finalSrc = node.Image_URL;
-    
-        if (fileIdMatch && node.Image_URL.includes("drive.google.com")) {
-            // 2. Convert to the direct 'uc' format which is more CORS-friendly
-            finalSrc = `https://drive.google.com/uc?export=download&id=${fileIdMatch[0]}`;
-        }
-    
-        imageHTML = `
-            <img src="${finalSrc}" 
-                 alt="node-img" 
-                 class="node-image"
-                 crossorigin="anonymous"
-                 style="width: 70px; height: 70px; object-fit: cover; border-radius: 6px; border: 1px solid #ddd; flex-shrink: 0;"
-                 onerror="this.onerror=null; this.src='https://via.placeholder.com/70?text=Error';">`;
-        }
+if (node.Image_URL && node.Image_URL.length > 10 && node.Image_URL !== "null") {
+    const fileIdMatch = node.Image_URL.match(/[-\w]{25,}/);
+    let finalSrc = node.Image_URL;
+
+    if (fileIdMatch && node.Image_URL.includes("drive.google.com")) {
+        const driveUrl = `https://drive.google.com/uc?export=download&id=${fileIdMatch[0]}`;
+        
+        // Use Cloudinary as a bridge to fix CORS and Scale the image to 70px automatically
+        finalSrc = `https://res.cloudinary.com/demo/image/fetch/w_70,h_70,c_fill,f_auto/${encodeURIComponent(driveUrl)}`;
+    }
+
+    imageHTML = `
+        <img src="${finalSrc}" 
+             alt="node-img" 
+             class="node-image"
+             style="width: 70px; height: 70px; object-fit: cover; border-radius: 6px; border: 1px solid #ddd; flex-shrink: 0;"
+             onerror="this.src='https://via.placeholder.com/70?text=User'">`;
+}
     else {
         // Placeholder to keep the alignment consistent
         imageHTML = `<div style="width: 70px; height: 70px; background: #f0f0f0; border-radius: 6px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; color: #ccc; font-size: 10px; border: 1px dashed #ccc;">No Image</div>`;
