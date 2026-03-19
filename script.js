@@ -116,10 +116,10 @@ function renderTree(node) {
     // Combine Image and Text
     nodeWrapper.innerHTML = `
         ${imageHTML}
-        <div style="display: flex; flex-direction: column; text-align: left;">
-            <div style="font-size: 0.65rem; color: #999; font-weight: bold; margin-bottom: 1px;">#${node.Node_ID}</div>
-            <div style="font-size: 0.85rem; color: #333; line-height: 1.1; font-weight: 500;">${node.Content}</div>
-        </div>
+            <div style="display: flex; flex-direction: column; text-align: left; justify-content: center;">
+                <div style="font-size: 0.7rem; color: #999; font-weight: bold; margin-bottom: 2px;">#${node.Node_ID}</div>
+                <div style="font-size: 0.9rem; color: #333; line-height: 1.2; font-weight: 500;">${node.Content}</div>
+            </div>
     `;
     
     nodeWrapper.onclick = (e) => {
