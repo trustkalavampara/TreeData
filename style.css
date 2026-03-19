@@ -51,10 +51,7 @@ body {
 }
 
 /* ==========================================================================
-   3. TREE STRUCTURE & CONNECTORS (The Overlap Logic)
-   ========================================================================== */
-/* ==========================================================================
-   3. TREE STRUCTURE & CONNECTORS (Final Vertical Extension)
+   3. TREE STRUCTURE & CONNECTORS (Final Bottom Extension +12px)
    ========================================================================== */
 #tree-container {
     overflow-x: auto;
@@ -87,12 +84,12 @@ body {
 #tree-container ul li::before {
     content: "";
     position: absolute;
-    /* Top remains fixed at -25px to keep the top gap closed */
+    /* Top remains at -25px to cover the top-side gap */
     top: -25px; 
     left: -16px; 
     width: 2px;
-    /* NEW HEIGHT: 100% + 25px (top) + 22px (bottom extension) = 47px */
-    height: calc(100% + 47px); 
+    /* NEW HEIGHT: 100% + 25px (top) + 34px (total bottom extension) = 59px */
+    height: calc(100% + 59px); 
     background: #888;
     z-index: 1;
 }
@@ -113,7 +110,7 @@ body {
 /* THE TAIL CUTTER */
 #tree-container ul li:last-child::before {
     top: -25px;
-    /* Stops exactly at the horizontal hook (25px offset + 24px hook center) */
+    /* Keeps the last branch clean - stops at its own horizontal hook */
     height: 49px; 
 }
 
