@@ -149,12 +149,10 @@ function renderTree(node) {
  * Shows or hides all images in the tree instantly without re-fetching data.
  */
 function updateImageVisibility() {
-    const checkbox = document.getElementById('imageToggle');
+    const isChecked = document.getElementById('imageToggle').checked;
     const container = document.getElementById('tree-container');
     
-    if (!checkbox || !container) return;
-
-    if (checkbox.checked) {
+    if (isChecked) {
         container.classList.remove('hide-images');
     } else {
         container.classList.add('hide-images');
