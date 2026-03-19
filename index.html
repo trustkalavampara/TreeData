@@ -14,6 +14,11 @@
                 <button class="btn-secondary" onclick="fetchTree()">🔄 Refresh Tree</button>
                 <button class="btn-secondary" onclick="toggleAll(true)">📂 Expand All</button>
                 <button class="btn-secondary" onclick="toggleAll(false)">📁 Collapse All</button>
+                <label style="margin-left: 20px; font-size: 14px; cursor: pointer; user-select: none;">
+                <input type="checkbox" id="imageToggle" checked onclick="updateImageVisibility()"> 
+                    Show Images
+                </label>
+                
             </div>
 
         <div id="tree-container">
