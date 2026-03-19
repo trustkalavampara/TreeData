@@ -89,7 +89,7 @@ body {
     left: -16px; 
     width: 2px;
     /* NEW HEIGHT: 100% + 25px (top) + 34px (total bottom extension) = 59px */
-    height: calc(100% + 59px); 
+    height: calc(100% + 64px); 
     background: #888;
     z-index: 1;
 }
