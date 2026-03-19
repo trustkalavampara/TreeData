@@ -81,13 +81,14 @@ body {
 }
 
 /* THE VERTICAL SPINE (The Gap-Free Fix) */
-#tree-container ul::before {
+#tree-container ul li::before {
     content: "";
     position: absolute;
-    top: 24px;         /* Starts at the middle of the first child's toggle */
-    bottom: 24px;      /* Ends at the middle of the last child's toggle */
-    left: 16px;        /* Centers the line in the 32px padding */
+    /* Overlap top and bottom by 12px to bridge padding gaps */
+    top: -12px;
+    left: -16px; 
     width: 2px;
+    height: calc(100% + 24px); 
     background: #888;
     z-index: 1;
 }
