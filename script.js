@@ -28,6 +28,11 @@ async function fetchTree() {
         
         if (treeRoot) {
             container.appendChild(renderTree(treeRoot));
+
+            // This ensures that if the checkbox is "Unchecked", 
+            // the new tree we just built immediately hides its images.
+            updateImageVisibility();
+            
         } else {
             container.innerHTML = "<div style='color:red;'>No root node found. Please check your sheet.</div>";
         }
@@ -137,6 +142,21 @@ function renderTree(node) {
         li.appendChild(ul);
     }
     return li;
+}
+
+/**
+ * GLOBAL IMAGE TOGGLE
+ * Shows or hides all images in the tree instantly without re-fetching data.
+ */
+function updateImageVisibility() {
+    const isChecked = document.getElementById('imageToggle').checked;
+    const container = document.getElementById('tree-container');
+    
+    if (isChecked) {
+        container.classList.remove('hide-images');
+    } else {
+        container.classList.add('hide-images');
+    }
 }
 
 /**
