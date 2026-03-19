@@ -51,7 +51,7 @@ body {
 }
 
 /* ==========================================================================
-   3. TREE STRUCTURE & CONNECTORS (RUBBER-BAND SPINE)
+   3. TREE STRUCTURE & CONNECTORS (The Overlap Logic)
    ========================================================================== */
 #tree-container {
     overflow-x: auto;
@@ -72,33 +72,33 @@ body {
     position: relative;
 }
 
-/* THE CONTINUOUS VERTICAL SPINE 
-   Anchored to the UL so it stretches when images appear */
-#tree-container ul::before {
-    content: "";
-    position: absolute;
-    /* Starts at the center of the first child, ends at the last */
-    top: 24px;         
-    bottom: 24px;      
-    left: 16px;        
-    width: 2px;
-    background: #888;
-    z-index: 1;
-}
-
 #tree-container li {
     margin: 0;
-    padding: 8px 0;
+    padding: 8px 0; 
     display: block;
     position: relative;
     width: max-content;
+}
+
+/* THE VERTICAL SPINE (The "Overlapping Segment" Fix) */
+#tree-container ul li::before {
+    content: "";
+    position: absolute;
+    /* We move the top up significantly to ensure it touches the node above */
+    top: -20px;
+    left: -16px; 
+    width: 2px;
+    /* THE IMAGE FIX: Height is 100% of the LI + 40px overlap buffer */
+    height: calc(100% + 40px); 
+    background: #888;
+    z-index: 1;
 }
 
 /* THE HORIZONTAL BRANCH (The Hook) */
 #tree-container li::after {
     content: "";
     position: absolute;
-    /* Stays centered with the 32px toggle button */
+    /* Aligns to center of 32px button + 8px li padding = 24px */
     top: 24px;   
     left: -16px;      
     width: 16px;      
@@ -107,9 +107,17 @@ body {
     z-index: 1;
 }
 
-/* Root Exception: Hide lines for the absolute top-level node */
-#tree-container > ul::before { display: none !important; }
-#tree-container > ul > li::after { display: none !important; }
+/* THE TAIL CUTTER: Specifically stops at the last child's hook */
+#tree-container ul li:last-child::before {
+    top: -20px;
+    height: 44px; /* (Top offset 20px) + (Hook position 24px) */
+}
+
+/* ROOT EXCEPTION: No lines for the very first node */
+#tree-container > ul > li::before,
+#tree-container > ul > li::after {
+    display: none !important;
+}
 
 /* The Row that aligns Toggle and Node */
 .tree-row {
@@ -141,12 +149,14 @@ body {
     border-color: #007bff;
 }
 
-/* Selected State: White & Bold */
+/* Selected State */
 .node-active {
     background-color: #007bff !important;
     border-color: #0056b3 !important;
 }
 
+.node-active div, 
+.node-active span,
 .node-active .node-id,
 .node-active .node-content {
     color: #ffffff !important;
@@ -177,7 +187,7 @@ body {
     border: 1px dashed #ccc;
 }
 
-/* Visibility Toggle Logic */
+/* Visibility Toggle */
 #tree-container.hide-images .node-image, 
 #tree-container.hide-images .node-placeholder {
     display: none !important;
@@ -221,7 +231,7 @@ li.collapsed > ul { display: none !important; }
 }
 
 /* ==========================================================================
-   6. MODALS & FORMS
+   6. MODALS
    ========================================================================== */
 .modal-overlay {
     position: fixed;
@@ -243,6 +253,7 @@ li.collapsed > ul { display: none !important; }
 .modal-body-scroll {
     max-height: 50vh;
     overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
 }
 
 .input-group-vertical {
