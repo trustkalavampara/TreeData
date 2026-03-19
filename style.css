@@ -87,6 +87,36 @@ body {
     gap: 12px;
 }
 
+/* 1. Add padding to the UL to make room for the line */
+#tree-container ul {
+    position: relative;
+    padding-left: 32px; /* Space for the vertical line */
+}
+
+/* 2. The Vertical Spine (Each LI carries its own segment) */
+#tree-container ul li::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -16px;       /* Centers the line in the 32px padding */
+    width: 2px;
+    height: 100%;      /* Stretches from top of LI to bottom */
+    background: #888;  /* Line color */
+}
+
+/* 3. The "Tail Cutter" 
+   This stops the vertical line at the last child so it doesn't hang down.
+   We will refine the height once we add horizontal lines. */
+#tree-container ul li:last-child::before {
+    height: 22px;      /* Stops at the vertical center of the toggle-btn */
+}
+
+/* 4. Root Exception 
+   The very first node (e.g., "Brainstorm") should not have a line to its left. */
+#tree-container > ul > li::before {
+    display: none !important;
+}
+
 /* ==========================================================================
    4. NODE ELEMENTS
    ========================================================================== */
