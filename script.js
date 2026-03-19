@@ -40,7 +40,6 @@ async function fetchTree() {
 /**
  * 2. TREE LOGIC
  * Converts a flat array into a nested parent-child object.
- * Forces IDs to Strings to prevent type-matching errors.
  */
 function buildTree(nodes) {
     const map = {};
@@ -61,11 +60,9 @@ function buildTree(nodes) {
     return root;
 }
 
-
 /**
  * 3. RENDER LOGIC
- * Recursively builds the HTML list structure.
- * Layout: [Toggle] [ [Image] [ID + Content] ]
+ * Layout: [Toggle] [ [Image(45px)] [ID + Content] ]
  */
 function renderTree(node) {
     if (!node) return document.createTextNode("");
@@ -93,35 +90,35 @@ function renderTree(node) {
     const nodeWrapper = document.createElement('div');
     nodeWrapper.className = "node-container";
     
-    // Apply Flexbox styles for Image(Left) and Content(Right)
+    // Apply Compact Flexbox styles
     nodeWrapper.style.display = "inline-flex";
     nodeWrapper.style.flexDirection = "row";
     nodeWrapper.style.alignItems = "center";
-    nodeWrapper.style.gap = "12px";
-    nodeWrapper.style.padding = "6px 10px";
+    nodeWrapper.style.gap = "10px";
+    nodeWrapper.style.padding = "4px 8px";
     nodeWrapper.style.verticalAlign = "middle";
+    nodeWrapper.style.borderRadius = "6px";
 
-    // Prepare Image Logic (Fixed 70px Square)
+    // Image Logic (Fixed 45px Square + Referrer fix)
     let imageHTML = "";
     if (node.Image_URL && node.Image_URL.length > 10 && node.Image_URL !== "null") {
         imageHTML = `
             <img src="${node.Image_URL}" 
+                 referrerpolicy="no-referrer"
                  alt="node-img" 
                  class="node-image"
-                 style="width: 70px; height: 70px; object-fit: cover; border-radius: 6px; border: 1px solid #ddd; flex-shrink: 0;"
+                 style="width: 45px; height: 45px; object-fit: cover; border-radius: 4px; border: 1px solid #ddd; flex-shrink: 0;"
                  onerror="this.style.display='none'">`;
-    }
-    else {
-        // Placeholder to keep the alignment consistent
-        imageHTML = `<div style="width: 70px; height: 70px; background: #f0f0f0; border-radius: 6px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; color: #ccc; font-size: 10px; border: 1px dashed #ccc;">No Image</div>`;
+    } else {
+        imageHTML = `<div style="width: 45px; height: 45px; background: #f5f5f5; border-radius: 4px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; color: #ddd; font-size: 8px; border: 1px dashed #ccc;">No Img</div>`;
     }
 
-    // Combine Image and Text (Text is wrapped in a column)
+    // Combine Image and Text
     nodeWrapper.innerHTML = `
         ${imageHTML}
-        <div style="display: flex; flexDirection: column; text-align: left;">
-            <div style="font-size: 0.75rem; color: #777; font-weight: bold; margin-bottom: 2px;">[${node.Node_ID}]</div>
-            <div style="font-size: 0.95rem; color: #333; line-height: 1.2;">${node.Content}</div>
+        <div style="display: flex; flex-direction: column; text-align: left;">
+            <div style="font-size: 0.65rem; color: #999; font-weight: bold; margin-bottom: 1px;">#${node.Node_ID}</div>
+            <div style="font-size: 0.85rem; color: #333; line-height: 1.1; font-weight: 500;">${node.Content}</div>
         </div>
     `;
     
@@ -142,10 +139,8 @@ function renderTree(node) {
     return li;
 }
 
-
 /**
  * 4. FORM SUBMISSION
- * Bundles text and image data into a single POST request.
  */
 async function addNode() {
     const parentId = document.getElementById('parentId').value;
@@ -157,7 +152,6 @@ async function addNode() {
     if (!content) return alert("Please enter a Title.");
     if (!parentId) return alert("Please select a parent node from the tree first.");
 
-    // Handle Image Conversion
     let base64Image = "";
     if (fileInput.files.length > 0) {
         const file = fileInput.files[0];
@@ -169,7 +163,7 @@ async function addNode() {
         }
     }
 
-    // Modal Confirmation Preview
+    // Modal Confirmation
     const pathPreview = document.getElementById('hierarchy-path').innerHTML;
     document.getElementById('modal-path-preview').innerHTML = pathPreview;
     document.getElementById('modal-phone-preview').innerText = phone ? `📞 Phone: ${phone}` : "";
@@ -186,7 +180,6 @@ async function addNode() {
 
     if (!confirmed) return;
 
-    // Send Everything to Apps Script
     const payload = { 
         Parent_ID: parentId, 
         Content: content, 
@@ -203,7 +196,6 @@ async function addNode() {
         const result = await response.json();
 
         if (result.status === "success") {
-            // Reset UI
             document.getElementById('nodeContent').value = "";
             document.getElementById('nodePhone').value = "";
             document.getElementById('nodeDescription').value = "";
@@ -211,21 +203,18 @@ async function addNode() {
             document.getElementById('parentId').value = "";
             document.getElementById('parent-tile-text').innerText = "None Selected";
             document.getElementById('hierarchy-path').innerText = "Select a node...";
-            
-            fetchTree(); // Refresh tree view
+            fetchTree();
         } else {
             alert("Server Error: " + result.message);
         }
     } catch (err) {
-        alert("Submission failed. Check your internet connection or Web App Deployment.");
+        alert("Submission failed. Check your Deployment.");
     }
 }
 
 /**
  * UTILITY FUNCTIONS
  */
-
-// Helper to convert Image to String
 const toBase64 = file => new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.readAsDataURL(file);
@@ -233,7 +222,6 @@ const toBase64 = file => new Promise((resolve, reject) => {
     reader.onerror = error => reject(error);
 });
 
-// Handles selecting a node to be a parent
 function selectNode(id, element) {
     document.querySelectorAll('.node-container').forEach(el => el.classList.remove('node-active'));
     element.classList.add('node-active');
@@ -249,7 +237,6 @@ function selectNode(id, element) {
     }
 }
 
-// Recursive helper to trace path back to root
 function getPath(targetId) {
     let path = [];
     let currentId = targetId;
@@ -265,7 +252,6 @@ function getPath(targetId) {
     return path;
 }
 
-// Global toggle for Expand/Collapse
 function toggleAll(expand) {
     document.querySelectorAll('#tree-container li').forEach(li => {
         const btn = li.querySelector('.toggle-btn');
@@ -282,7 +268,6 @@ function toggleAll(expand) {
     });
 }
 
-// Updates the green "typing preview" in the path label
 function updateLivePath() {
     const parentId = document.getElementById('parentId').value;
     const currentInput = document.getElementById('nodeContent').value.trim();
