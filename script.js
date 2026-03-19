@@ -303,3 +303,37 @@ function updateLivePath() {
         pathDisplay.innerText = basePathString;
     }
 }
+
+// Updates the Text Preview
+function updatePreview() {
+    const name = document.getElementById('nodeContent').value || "New Node";
+    const info = document.getElementById('nodePhone').value || "Info Preview";
+    
+    document.getElementById('preview-name').innerText = name;
+    document.getElementById('preview-info').innerText = info;
+    
+    // If you have your existing path function, call it too
+    if (typeof updateLivePath === "function") updateLivePath();
+}
+
+// Updates the Image Preview
+function previewFile() {
+    const previewImg = document.getElementById('preview-image');
+    const placeholder = document.getElementById('preview-image-box');
+    const file = document.getElementById('nodeImage').files[0];
+    const reader = new FileReader();
+
+    reader.onloadend = function () {
+        previewImg.src = reader.result;
+        previewImg.style.display = "block";
+        placeholder.style.display = "none";
+    }
+
+    if (file) {
+        reader.readAsDataURL(file);
+    } else {
+        previewImg.src = "";
+        previewImg.style.display = "none";
+        placeholder.style.display = "flex";
+    }
+}
