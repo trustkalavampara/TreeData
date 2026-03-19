@@ -1,4 +1,4 @@
-/* ==========================================================================#
+/* ==========================================================================
    1. BASE STYLES & LAYOUT
    ========================================================================== */
 * { box-sizing: border-box; }
@@ -51,7 +51,7 @@ body {
 }
 
 /* ==========================================================================
-   3. TREE STRUCTURE & CONNECTORS
+   3. TREE STRUCTURE & CONNECTORS (RUBBER-BAND SPINE)
    ========================================================================== */
 #tree-container {
     overflow-x: auto;
@@ -66,38 +66,39 @@ body {
 #tree-container ul {
     list-style-type: none;
     margin: 0;
-    padding-left: 32px; /* Fixed space for the spine */
+    padding-left: 32px; 
     display: block;
     width: max-content;
     position: relative;
+}
+
+/* THE CONTINUOUS VERTICAL SPINE 
+   Anchored to the UL so it stretches when images appear */
+#tree-container ul::before {
+    content: "";
+    position: absolute;
+    /* Starts at the center of the first child, ends at the last */
+    top: 24px;         
+    bottom: 24px;      
+    left: 16px;        
+    width: 2px;
+    background: #888;
+    z-index: 1;
 }
 
 #tree-container li {
     margin: 0;
-    padding: 8px 0; /* Vertical spacing between nodes */
+    padding: 8px 0;
     display: block;
     position: relative;
     width: max-content;
-}
-
-/* THE VERTICAL SPINE (The Gap-Free Fix) */
-#tree-container ul li::before {
-    content: "";
-    position: absolute;
-    /* Overlap top and bottom by 12px to bridge padding gaps */
-    top: -12px;
-    left: -16px; 
-    width: 2px;
-    height: calc(100% + 24px); 
-    background: #888;
-    z-index: 1;
 }
 
 /* THE HORIZONTAL BRANCH (The Hook) */
 #tree-container li::after {
     content: "";
     position: absolute;
-    /* Aligns to the center of the 32px toggle-btn + li padding */
+    /* Stays centered with the 32px toggle button */
     top: 24px;   
     left: -16px;      
     width: 16px;      
@@ -106,17 +107,9 @@ body {
     z-index: 1;
 }
 
-/* THE TAIL CUTTER: Stops the line at the last horizontal branch */
-#tree-container ul li:last-child::before {
-    top: -12px;
-    height: 36px; /* Offset (12px) + Hook Position (24px) */
-}
-
-/* ROOT EXCEPTION: No lines for the very first node */
-#tree-container > ul > li::before,
-#tree-container > ul > li::after {
-    display: none !important;
-}
+/* Root Exception: Hide lines for the absolute top-level node */
+#tree-container > ul::before { display: none !important; }
+#tree-container > ul > li::after { display: none !important; }
 
 /* The Row that aligns Toggle and Node */
 .tree-row {
@@ -148,14 +141,12 @@ body {
     border-color: #007bff;
 }
 
-/* Selected State */
+/* Selected State: White & Bold */
 .node-active {
     background-color: #007bff !important;
     border-color: #0056b3 !important;
 }
 
-.node-active div, 
-.node-active span,
 .node-active .node-id,
 .node-active .node-content {
     color: #ffffff !important;
@@ -186,7 +177,7 @@ body {
     border: 1px dashed #ccc;
 }
 
-/* Toggle Logic for Images */
+/* Visibility Toggle Logic */
 #tree-container.hide-images .node-image, 
 #tree-container.hide-images .node-placeholder {
     display: none !important;
@@ -229,23 +220,8 @@ li.collapsed > ul { display: none !important; }
     display: block;
 }
 
-.input-group-vertical {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-}
-
-.input-group-vertical input, 
-.input-group-vertical textarea {
-    padding: 14px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    width: 100%;
-    font-size: 16px;
-}
-
 /* ==========================================================================
-   6. MODALS
+   6. MODALS & FORMS
    ========================================================================== */
 .modal-overlay {
     position: fixed;
@@ -267,7 +243,21 @@ li.collapsed > ul { display: none !important; }
 .modal-body-scroll {
     max-height: 50vh;
     overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
+}
+
+.input-group-vertical {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.input-group-vertical input, 
+.input-group-vertical textarea {
+    padding: 14px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    width: 100%;
+    font-size: 16px;
 }
 
 /* ==========================================================================
