@@ -95,11 +95,15 @@ body {
     width: max-content;      /* THE FIX: Forces width to match content */
 }
 
+/* The Parent LI becomes the flex container */
 #tree-container li {
     margin: 0;
     padding: 8px 0;
-    display: block;
-    width: max-content;      /* THE FIX: Each row stays as wide as its text */
+    display: flex;          /* THE FIX: Align children in a row */
+    flex-direction: row;    
+    align-items: center;    /* THE FIX: Vertically centers the toggle with the node */
+    position: relative;
+    width: max-content;
 }
 
 /* When images are hidden, completely remove them from the layout */
@@ -203,19 +207,17 @@ body {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 32px;            /* Large enough to click easily */
-    height: 32px;
+    width: 28px;
+    height: 28px;
     cursor: pointer;
     font-family: monospace;
     font-weight: bold;
-    font-size: 1.2rem;
-    color: #555;
-    user-select: none;      /* Prevents text highlighting on double click */
-    background: #f9f9f9;
-    border-radius: 4px;
-    margin-right: 8px;      /* Gap between button and node */
+    background: #fff;
     border: 1px solid #ddd;
-    vertical-align: middle;
+    border-radius: 4px;
+    margin-right: 12px;     /* Gap between button and the node box */
+    z-index: 5;             /* Keeps it above connecting lines */
+    flex-shrink: 0;         /* Prevents the button from squishing */
 }
 
 .toggle-btn:hover {
