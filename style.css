@@ -147,7 +147,7 @@ body {
 /* This is the internal gap between image and text */
     gap: 8px; 
     padding: 8px 12px;
-    border: 1px solid #E0F7FA80;
+    border: 1px solid #ddd;
     border-radius: 8px;
     background: #E0F7FA33;
     cursor: pointer;
@@ -212,7 +212,7 @@ body {
     height: 32px;
     cursor: pointer;
     background: #E0F7FA33;
-    border: 1px solid #E0F7FA80;
+    border: 1px solid #ddd;
     border-radius: 4px;
     flex-shrink: 0;
     font-weight: bold;
