@@ -72,85 +72,53 @@ body {
    3. TREE STRUCTURE (The Final Alignment Fix)
    ========================================================================== */
 
+/* ==========================================================================
+   3. TREE STRUCTURE (Base Layout - Dynamic Width)
+   ========================================================================== */
+
+/* The main wrapper allows horizontal scrolling if the tree gets too wide */
+#tree-container {
+    overflow-x: auto;
+    white-space: nowrap;    /* Prevents nodes from wrapping to the next line */
+    padding: 20px;
+    border: 1px solid #eee;
+    background: #fdfdfd;
+    min-height: 300px;
+}
+
+/* The UL must shrink-wrap to the content width */
 #tree-container ul {
     list-style-type: none;
-    padding-left: 35px; 
-    position: relative;
     margin: 0;
+    padding-left: 40px;      /* Indentation for children */
+    display: block;
+    width: max-content;      /* THE FIX: Forces width to match content */
 }
 
 #tree-container li {
     margin: 0;
-    padding: 0;
-    position: relative;
+    padding: 8px 0;
     display: block;
+    width: max-content;      /* THE FIX: Each row stays as wide as its text */
 }
 
-/* THE VERTICAL SPINE: Continuous from top to bottom */
-#tree-container ul li::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: -20px; 
-    width: 2px;
-    height: 100%;
-    background: #888;
-    z-index: 1;
-}
-
-/* THE HORIZONTAL HOOK: Always points to the middle of the toggle */
-#tree-container li::after {
-    content: "";
-    position: absolute;
-    top: 24px;   /* Fixed anchor point */
-    left: -20px;      
-    width: 20px;      
-    height: 2px;
-    background: #888;
-    z-index: 1;
-}
-
-/* TAIL CUTTER: Stops the line at the last child's hook */
-#tree-container ul li:last-child::before {
-    height: 24px; 
-}
-
-/* ROOT EXCEPTION */
-#tree-container > ul > li::before, 
-#tree-container > ul > li::after {
-    display: none !important;
-}
-
-/* THE TOGGLE BUTTON: Now acts as a fixed-size anchor */
-.toggle-btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 30px;
-    height: 48px; /* Fixed height for line alignment */
-    cursor: pointer;
-    background: white;
-    position: relative;
-    z-index: 5;
-    float: left; /* Keeps it to the left of the content */
-}
-
-/* THE NODE WRAPPER: Side-by-side with toggle */
+/* Ensure the node content stays on one line */
 .node-container {
-    display: flex !important;
+    display: inline-flex;    /* Keeps Image + Text in a row */
     align-items: center;
     gap: 12px;
-    padding: 5px 10px;
-    min-height: 48px;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 8px 12px;
     cursor: pointer;
+    transition: background 0.2s;
 }
 
-/* HIDE IMAGES LOGIC */
-#tree-container.hide-images .node-image, 
-#tree-container.hide-images .node-placeholder {
-    display: none !important;
+.node-container:hover {
+    background: #f0f7ff;
+    border-color: #007bff;
 }
-
 
 /* ==========================================================================
    4. NODE INTERACTIVE ELEMENTS (Touch Optimized)
