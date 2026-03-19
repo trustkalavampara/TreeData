@@ -108,7 +108,7 @@ function renderTree(node) {
     nodeWrapper.innerHTML = `
         ${imageHTML}
         <div style="display: flex; flex-direction: column; text-align: left;">
-            <div class="node-id" style="font-size: 0.7rem; color: #999; font-weight: bold;">#${node.Node_ID}</div>
+            <div class="node-id" style="font-size: 0.7rem; color: #666666; font-weight: bold;">#${node.Node_ID}</div>
             <div class="node-content" style="font-size: 0.9rem; color: #333; font-weight: 500;">${node.Content}</div>
         </div>
     `;
