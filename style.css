@@ -1,9 +1,7 @@
 /* ==========================================================================
-   1. MOBILE-FIRST BASE STYLES & LAYOUT
+   1. BASE STYLES & LAYOUT
    ========================================================================== */
-* {
-    box-sizing: border-box; /* Critical for mobile layout math */
-}
+* { box-sizing: border-box; }
 
 body { 
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
@@ -25,108 +23,73 @@ body {
 }
 
 /* ==========================================================================
-   2. GLOBAL CONTROLS (Sticky for Mobile)
+   2. GLOBAL CONTROLS (Sticky)
    ========================================================================== */
 .global-controls, .controls {
     margin: 0;
-    padding: 25px 0; /* Increased top and bottom height for better separation */
+    padding: 20px 0;
     display: flex;
     gap: 12px;
-    flex-wrap: wrap; /* Important for mobile wrapping */
-    background: #f4f4f9; /* Keeps it consistent with body */
-    position: sticky; /* Keeps buttons accessible while scrolling */
+    flex-wrap: wrap;
+    background: #f4f4f9;
+    position: sticky;
     top: 0;
     z-index: 100;
 }
 
-.global-controls button {
-    flex: 1 1 auto; /* Buttons grow to fill space on mobile */
-    min-width: 120px;
-    padding: 12px 10px;
-    font-size: 0.9rem;
-}
-
 .btn-secondary {
-    background-color: #0056b3 !important; /* Professional Deep Blue */
+    background-color: #0056b3 !important;
     color: white !important;
     border: 1px solid #004494;
-    padding: 14px 20px; /* Larger tap target for mobile */
+    padding: 14px 20px;
     border-radius: 6px;
     cursor: pointer;
     font-weight: 600;
-    font-size: 1rem;
     transition: background 0.2s, transform 0.1s;
+    flex: 1 1 auto;
+    min-width: 120px;
 }
-
-.btn-secondary:hover {
-    background-color: #004494 !important;
-    transform: translateY(-1px);
-}
-
-.btn-secondary:active {
-    background-color: #003366 !important;
-    transform: translateY(0);
-}
-
-/* ==========================================================================$
-   3. TREE STRUCTURE (The Final Alignment Fix)
-   ========================================================================== */
 
 /* ==========================================================================
-   3. TREE STRUCTURE (Base Layout - Dynamic Width)
+   3. TREE STRUCTURE & CONNECTORS
    ========================================================================== */
-
-/* The main wrapper allows horizontal scrolling if the tree gets too wide */
 #tree-container {
     overflow-x: auto;
-    white-space: nowrap;    /* Prevents nodes from wrapping to the next line */
+    white-space: nowrap;
     padding: 20px;
     border: 1px solid #eee;
     background: #fdfdfd;
     min-height: 300px;
+    -webkit-overflow-scrolling: touch;
 }
 
-/* The UL must shrink-wrap to the content width */
 #tree-container ul {
     list-style-type: none;
     margin: 0;
-    padding-left: 40px;      /* Indentation for children */
+    padding-left: 40px;
     display: block;
-    width: max-content;      /* THE FIX: Forces width to match content */
+    width: max-content;
 }
 
-/* The Parent LI becomes the flex container */
-/* Keep LI as a block so children (UL) fall underneath */
 #tree-container li {
     margin: 0;
-    padding: 4px 0;
-    list-style: none;
-    display: block; 
+    padding: 6px 0;
+    display: block;
     position: relative;
     width: max-content;
 }
 
-/* NEW: This container specifically aligns the Toggle and the Node Box */
+/* The Row that aligns Toggle and Node */
 .tree-row {
     display: flex;
     flex-direction: row;
-    align-items: center; /* Vertically centers the toggle with the 64px box */
+    align-items: center; /* THE FIX: Perfect Vertical Centering */
     gap: 12px;
 }
 
-/* When images are hidden, completely remove them from the layout */
-#tree-container.hide-images .node-image, 
-#tree-container.hide-images .node-placeholder {
-    display: none !important;
-}
-
-/* Ensure the text container adjusts its margin when images vanish */
-#tree-container.hide-images .node-container {
-    gap: 0; /* Remove the gap since there is no image to gap from */
-}
-
-
-/* Ensure the node content stays on one line */
+/* ==========================================================================
+   4. NODE ELEMENTS
+   ========================================================================== */
 .node-container {
     display: inline-flex !important;
     align-items: center;
@@ -135,6 +98,8 @@ body {
     border: 1px solid #ddd;
     border-radius: 8px;
     background: white;
+    cursor: pointer;
+    transition: all 0.2s;
 }
 
 .node-container:hover {
@@ -142,79 +107,63 @@ body {
     border-color: #007bff;
 }
 
-/* ==========================================================================
-   4. NODE INTERACTIVE ELEMENTS (Touch Optimized)
-   ========================================================================== */
-
-/* The container for the node content */
-.node-container {
-    display: flex;
-    flex-direction: row; /* Force Horizontal layout */
-    align-items: center; /* Center image and text vertically */
-    gap: 12px;           /* Space between image and text */
-    padding: 6px 10px;
-    border: 1px solid #eee;
-    border-radius: 8px;
-    background-color: #f9f9f9;
-    min-width: 200px;
-}
-
-/* The Image styling */
-.node-image {
-    width: 70px;         /* Fixed width */
-    height: 70px;        /* Fixed height */
-    object-fit: cover;   /* Crops image to square without stretching */
-    border-radius: 4px;
-    border: 1px solid #ddd;
-    flex-shrink: 0;      /* Prevents image from squishing */
-}
-
-/* The Text styling */
-.node-text-box {
-    display: flex;
-    flex-direction: column;
-}
-
-
-/* The Active/Selected State */
+/* Selected State */
 .node-active {
-    background-color: #007bff !important; /* Professional Blue */
+    background-color: #007bff !important;
     border-color: #0056b3 !important;
-    box-shadow: 0 0 8px rgba(0, 123, 255, 0.5);
 }
 
-/* Force ID and Content text to White & Bold inside an active node */
 .node-active div, 
-.node-active span {
+.node-active span,
+.node-active .node-id,
+.node-active .node-content {
     color: #ffffff !important;
     font-weight: bold !important;
 }
 
-/* Optional: Make the "No Img" placeholder look better when selected */
-.node-active .node-placeholder {
-    background: rgba(255, 255, 255, 0.2) !important;
-    color: #fff !important;
-    border-color: rgba(255, 255, 255, 0.4) !important;
+/* Image/Placeholder Handling */
+.node-image {
+    width: 64px;
+    height: 64px;
+    object-fit: cover;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+    flex-shrink: 0;
 }
 
-.node-id {
-    font-size: 0.8rem;
-    color: #888;
-    font-weight: bold;
+.node-placeholder {
+    width: 64px;
+    height: 64px;
+    background: #f5f5f5;
+    border-radius: 4px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ccc;
+    font-size: 10px;
+    border: 1px dashed #ccc;
 }
 
-.node-content-text {
-    font-size: 1rem;
-    color: #333;
+/* Toggle Logic for Images */
+#tree-container.hide-images .node-image, 
+#tree-container.hide-images .node-placeholder {
+    display: none !important;
 }
 
-/* THE TOGGLE BUTTON - Dedicated Click Area */
+#tree-container.hide-images .node-container {
+    gap: 0;
+}
+
+/* ==========================================================================
+   5. INTERACTIVE BUTTONS & FORMS
+   ========================================================================== */
 .toggle-btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 28px;
-    height: 28px;
+    width: 32px;
+    height: 32px;
     cursor: pointer;
     background: #fff;
     border: 1px solid #ddd;
@@ -222,67 +171,21 @@ body {
     flex-shrink: 0;
     font-weight: bold;
     z-index: 5;
+    user-select: none;
 }
 
-.toggle-btn:hover {
-    background: #e9e9e9;
-    color: #000;
-}
-
-/* The Collapsed State - Hides the child UL */
-#tree-container li.collapsed > ul {
-    display: none !important;
-}
-
-li.collapsed > ul { display: none; }
-li.collapsed > .node-container { border: 1px dashed #0056b3; background: #f8fbff; }
-
-/* ==========================================================================
-   5. FORM & UI CONTROLS
-   ========================================================================== */
-
-.add-node-form { 
-    background: #f1f1f1; 
-    padding: 15px; 
-    border-radius: 12px; 
-    margin-top: 30px;
-}
+li.collapsed > ul { display: none !important; }
 
 #hierarchy-path {
     font-size: 1.1rem;
     font-weight: 800;
     color: #2c3e50;
     margin-bottom: 15px;
-    line-height: 1.5;
     border-left: 5px solid #007bff;
     padding: 5px 12px;
-    background: #f8f9fa; /* Light background to define the area */
-    border-radius: 0 4px 4px 0;
-
-    /* --- BOUNDARY CONTROLS --- */
-    word-wrap: break-word;       /* Standard support */
-    overflow-wrap: break-word;   /* Modern browser support */
-    white-space: normal;         /* Allows wrapping (unlike 'nowrap') */
-    max-width: 100%;             /* Ensures it never exceeds its parent container */
-    display: block;              /* Takes up full width available */
-}
-
-/* Optional: Style the live-typed text specifically to wrap well */
-#hierarchy-path span {
-    display: inline;             /* Keeps it part of the text flow */
-    word-break: break-all;       /* Forces a break even inside long words if needed */
-}
-
-.parent-tile {
-    background: #fff;
-    border: 2px solid #007bff;
-    border-radius: 8px;
-    padding: 15px;
-    margin-bottom: 20px;
-}
-
-#parent-tile {
-    display: none !important;
+    background: #f8f9fa;
+    word-wrap: break-word;
+    display: block;
 }
 
 .input-group-vertical {
@@ -297,25 +200,11 @@ li.collapsed > .node-container { border: 1px dashed #0056b3; background: #f8fbff
     border: 1px solid #ccc;
     border-radius: 8px;
     width: 100%;
-    font-size: 16px; /* Mandatory for mobile to prevent zoom */
+    font-size: 16px; /* Prevents iOS auto-zoom */
 }
-
-button { 
-    padding: 16px 20px; 
-    cursor: pointer; 
-    background: #28a745; 
-    color: white; 
-    border: none; 
-    border-radius: 8px; 
-    font-weight: bold;
-    font-size: 1.1rem;
-    transition: filter 0.2s;
-}
-
-button:active { filter: brightness(0.8); }
 
 /* ==========================================================================
-   6. ACCESSIBLE MODAL
+   6. MODALS
    ========================================================================== */
 .modal-overlay {
     position: fixed;
@@ -331,72 +220,20 @@ button:active { filter: brightness(0.8); }
     border-radius: 15px;
     width: 95%;
     max-width: 500px;
-    text-align: center;
     border: 4px solid #007bff;
 }
 
-/* Container for the scrollable part of the modal */
 .modal-body-scroll {
-    max-height: 50vh;           /* Limits height to 50% of the screen height */
-    overflow-y: auto;          /* Adds vertical scrollbar only if needed */
-    padding: 10px;
-    margin-bottom: 20px;
-    border-radius: 8px;
-    background: #fafafa;
-    box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
-    
-    /* Smooth scrolling for mobile */
+    max-height: 50vh;
+    overflow-y: auto;
     -webkit-overflow-scrolling: touch;
 }
 
-.modal-path {
-    font-size: 1.4rem;
-    font-weight: bold;
-    color: #333;
-    line-height: 1.5;
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-    margin: 0; /* Margin handled by the scroll container */
-    text-align: left; /* Easier to read long paths when left-aligned */
-}
-
-/* Ensure the green highlighted span inside the modal also wraps */
-.modal-path span {
-    word-break: break-all;
-}
-
-.modal-details { font-size: 1.1rem; text-align: left; background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 20px; }
-.modal-details p {
-    word-wrap: break-word;
-    white-space: pre-wrap; /* Maintains line breaks in descriptions */
-    margin: 10px 0;
-}
-
-.btn-lg { width: 100%; font-size: 1.4rem; padding: 18px; margin: 5px 0; border-radius: 10px; border: none; font-weight: bold; }
-.btn-confirm { background-color: #28a745; color: white; }
-.btn-cancel { background-color: #dc3545; color: white; }
-
 /* ==========================================================================
-   7. DESKTOP ENHANCEMENTS (Tablet & PC)
+   7. DESKTOP OVERRIDES
    ========================================================================== */
 @media (min-width: 768px) {
-    body { padding: 30px; }
-    
-    .container { 
-        max-width: 800px; 
-        margin: auto; 
-        padding: 30px;
-    }
-
-    .global-controls { position: static; background: transparent; padding: 0; }
-    .global-controls button { flex: 0 1 auto; width: auto; }
-
-    .node-container { padding: 4px 10px; font-size: 0.95rem; }
-    .toggle-btn { width: 32px; height: 22px; line-height: 20px; font-size: 1rem; }
-
-    .btn-lg { width: auto; margin: 10px; }
-    
-    .modal-content { padding: 40px; width: 600px; }
-    .modal-path { font-size: 1.8rem; }
-    .modal-details { font-size: 1.4rem; }
+    .container { max-width: 800px; margin: auto; padding: 30px; }
+    .global-controls { position: static; background: transparent; }
+    .btn-secondary { flex: 0 1 auto; width: auto; }
 }
