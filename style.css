@@ -66,55 +66,65 @@ body {
 #tree-container ul {
     list-style-type: none;
     margin: 0;
-    padding-left: 40px;
+    padding-left: 32px; /* Fixed space for the spine */
     display: block;
     width: max-content;
+    position: relative;
 }
 
 #tree-container li {
     margin: 0;
-    padding: 6px 0;
+    padding: 8px 0; /* Vertical spacing between nodes */
     display: block;
     position: relative;
     width: max-content;
+}
+
+/* THE VERTICAL SPINE (The Gap-Free Fix) */
+#tree-container ul li::before {
+    content: "";
+    position: absolute;
+    /* Overlap top and bottom by 12px to bridge padding gaps */
+    top: -12px;
+    left: -16px; 
+    width: 2px;
+    height: calc(100% + 24px); 
+    background: #888;
+    z-index: 1;
+}
+
+/* THE HORIZONTAL BRANCH (The Hook) */
+#tree-container li::after {
+    content: "";
+    position: absolute;
+    /* Aligns to the center of the 32px toggle-btn + li padding */
+    top: 24px;   
+    left: -16px;      
+    width: 16px;      
+    height: 2px;
+    background: #888;
+    z-index: 1;
+}
+
+/* THE TAIL CUTTER: Stops the line at the last horizontal branch */
+#tree-container ul li:last-child::before {
+    top: -12px;
+    height: 36px; /* Offset (12px) + Hook Position (24px) */
+}
+
+/* ROOT EXCEPTION: No lines for the very first node */
+#tree-container > ul > li::before,
+#tree-container > ul > li::after {
+    display: none !important;
 }
 
 /* The Row that aligns Toggle and Node */
 .tree-row {
     display: flex;
     flex-direction: row;
-    align-items: center; /* THE FIX: Perfect Vertical Centering */
+    align-items: center; 
     gap: 12px;
-}
-
-/* 1. Add padding to the UL to make room for the line */
-#tree-container ul {
     position: relative;
-    padding-left: 32px; /* Space for the vertical line */
-}
-
-/* 2. The Vertical Spine (Each LI carries its own segment) */
-#tree-container ul li::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: -16px;       /* Centers the line in the 32px padding */
-    width: 2px;
-    height: 100%;      /* Stretches from top of LI to bottom */
-    background: #888;  /* Line color */
-}
-
-/* 3. The "Tail Cutter" 
-   This stops the vertical line at the last child so it doesn't hang down.
-   We will refine the height once we add horizontal lines. */
-#tree-container ul li:last-child::before {
-    height: 22px;      /* Stops at the vertical center of the toggle-btn */
-}
-
-/* 4. Root Exception 
-   The very first node (e.g., "Brainstorm") should not have a line to its left. */
-#tree-container > ul > li::before {
-    display: none !important;
 }
 
 /* ==========================================================================
@@ -130,6 +140,7 @@ body {
     background: white;
     cursor: pointer;
     transition: all 0.2s;
+    z-index: 2;
 }
 
 .node-container:hover {
@@ -230,7 +241,7 @@ li.collapsed > ul { display: none !important; }
     border: 1px solid #ccc;
     border-radius: 8px;
     width: 100%;
-    font-size: 16px; /* Prevents iOS auto-zoom */
+    font-size: 16px;
 }
 
 /* ==========================================================================
