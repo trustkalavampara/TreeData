@@ -72,80 +72,90 @@ body {
    3. TREE STRUCTURE (The "Bulletproof" Connector Fix)
    ========================================================================== */
 
+/* ==========================================================================
+   3. TREE STRUCTURE (Top-Anchored Connector Logic)
+   ========================================================================== */
+
 #tree-container ul {
     list-style-type: none;
-    padding-left: 32px; 
+    padding-left: 30px; 
     position: relative;
     margin: 0;
 }
 
 #tree-container li {
     margin: 0;
-    padding: 0; /* We move padding to the container for better line hits */
+    padding: 0; /* Padding moved to children for line accuracy */
     position: relative;
-    list-style-type: none;
+    display: block;
 }
 
-/* THE VERTICAL LINE (The Spine) */
+/**
+ * THE VERTICAL SPINE
+ * Starts at top: 0 and height: 100% to ensure NO GAPS between parents and children.
+ */
 #tree-container ul li::before {
     content: "";
     position: absolute;
     top: 0;
-    left: -16px; 
+    left: -15px; /* Half of the 30px padding */
     width: 2px;
     height: 100%;
     background: #888;
 }
 
-/* THE HORIZONTAL LINE (The Hook) */
+/**
+ * THE HORIZONTAL BRANCH
+ * Fixed at 32px from the top. This aligns with the center of the 64px tall toggle area.
+ */
 #tree-container li::after {
     content: "";
     position: absolute;
-    top: 24px;   /* This is the center of your Toggle Button */
-    left: -16px;      
-    width: 16px;      
+    top: 32px; 
+    left: -15px;      
+    width: 15px;      
     height: 2px;
     background: #888;
 }
 
-/* STOP THE LINE at the last child */
+/**
+ * TAIL CUTTER
+ * Stops the line exactly at the last horizontal branch.
+ */
 #tree-container ul li:last-child::before {
-    height: 24px; /* Matches the 'top' of the horizontal line */
+    height: 32px; /* Must match the 'top' value of the horizontal branch */
 }
 
-/* HIDE LINES FOR ROOT */
+/**
+ * ROOT LEVEL EXCEPTIONS
+ * No lines for the very first node.
+ */
 #tree-container > ul > li::before, 
 #tree-container > ul > li::after {
     display: none !important;
 }
 
-/* THE TOGGLE BUTTON - Ensuring it sits on top of the lines */
+/* Ensure the toggle button is tall enough to be the 'anchor' */
 .toggle-btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 24px;
-    height: 48px; /* Standard height for the line to hit center */
+    width: 30px;
+    height: 64px; /* Matches the line anchor logic */
     cursor: pointer;
-    background: white;
+    background: white; /* Masks the line behind it */
     position: relative;
     z-index: 2;
-    font-weight: bold;
-    color: #444;
+    vertical-align: top;
 }
 
-/* THE NODE WRAPPER - Side by side with Toggle */
+/* Node container must align with the top of the toggle */
 .node-container {
     display: inline-flex !important;
     vertical-align: top;
-    margin: 4px 0;
+    margin-top: 0; 
 }
 
-/* HIDE IMAGES LOGIC */
-#tree-container.hide-images .node-image, 
-#tree-container.hide-images .node-placeholder {
-    display: none !important;
-}
 
 /* ==========================================================================
    4. NODE INTERACTIVE ELEMENTS (Touch Optimized)
