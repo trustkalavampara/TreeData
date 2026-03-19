@@ -152,10 +152,28 @@ function updateImageVisibility() {
     const isChecked = document.getElementById('imageToggle').checked;
     const container = document.getElementById('tree-container');
     
+    // Create/Update a style tag to adjust the line position dynamically
+    let lineStyle = document.getElementById('dynamic-line-style');
+    if (!lineStyle) {
+        lineStyle = document.createElement('style');
+        lineStyle.id = 'dynamic-line-style';
+        document.head.appendChild(lineStyle);
+    }
+
     if (isChecked) {
         container.classList.remove('hide-images');
+        // Standard position for 64px images
+        lineStyle.innerHTML = `
+            #tree-container ul li::after { top: 36px; } 
+            #tree-container ul li:last-child::before { height: 36px; }
+        `;
     } else {
         container.classList.add('hide-images');
+        // Compact position for text-only mode
+        lineStyle.innerHTML = `
+            #tree-container ul li::after { top: 18px; } 
+            #tree-container ul li:last-child::before { height: 18px; }
+        `;
     }
 }
 
