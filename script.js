@@ -149,14 +149,12 @@ function renderTree(node) {
  * Shows or hides all images in the tree instantly without re-fetching data.
  */
 function updateImageVisibility() {
-    const isChecked = document.getElementById('imageToggle').checked;
+    const checkbox = document.getElementById('imageToggle');
     const container = document.getElementById('tree-container');
     
-    // We no longer need the 'dynamic-line-style' tag because
-    // our lines are anchored to the toggle button which doesn't move!
-    // But we still toggle the class for the images themselves.
-    
-    if (isChecked) {
+    if (!checkbox || !container) return;
+
+    if (checkbox.checked) {
         container.classList.remove('hide-images');
     } else {
         container.classList.add('hide-images');
