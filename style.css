@@ -153,12 +153,26 @@ body {
     flex-direction: column;
 }
 
+
+/* The Active/Selected State */
 .node-active {
-    background-color: #ff4d4d !important; 
-    color: white !important;
-    border: 1px solid #cc0000 !important;
-    font-weight: bold;
-    box-shadow: 0 4px 8px rgba(204, 0, 0, 0.2);
+    background-color: #007bff !important; /* Professional Blue */
+    border-color: #0056b3 !important;
+    box-shadow: 0 0 8px rgba(0, 123, 255, 0.5);
+}
+
+/* Force ID and Content text to White & Bold inside an active node */
+.node-active div, 
+.node-active span {
+    color: #ffffff !important;
+    font-weight: bold !important;
+}
+
+/* Optional: Make the "No Img" placeholder look better when selected */
+.node-active .node-placeholder {
+    background: rgba(255, 255, 255, 0.2) !important;
+    color: #fff !important;
+    border-color: rgba(255, 255, 255, 0.4) !important;
 }
 
 .node-id {
