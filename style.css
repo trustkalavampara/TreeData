@@ -102,6 +102,18 @@ body {
     width: max-content;      /* THE FIX: Each row stays as wide as its text */
 }
 
+/* When images are hidden, completely remove them from the layout */
+#tree-container.hide-images .node-image, 
+#tree-container.hide-images .node-placeholder {
+    display: none !important;
+}
+
+/* Ensure the text container adjusts its margin when images vanish */
+#tree-container.hide-images .node-container {
+    gap: 0; /* Remove the gap since there is no image to gap from */
+}
+
+
 /* Ensure the node content stays on one line */
 .node-container {
     display: inline-flex;    /* Keeps Image + Text in a row */
