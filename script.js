@@ -115,7 +115,7 @@ function renderTree(node) {
                  style="width: 64px; height: 64px; object-fit: cover; border-radius: 4px; border: 1px solid #ddd; flex-shrink: 0;"
                  onerror="this.style.display='none'">`;
     } else {
-        imageHTML = `<div style="width: 64px; height: 64px; background: #f5f5f5; border-radius: 4px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; color: #ddd; font-size: 8px; border: 1px dashed #ccc;">No Img</div>`;
+      imageHTML = `<div class="node-placeholder" style="width: 64px; height: 64px; background: #f5f5f5; border-radius: 4px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; color: #ddd; font-size: 8px; border: 1px dashed #ccc;">No Img</div>`;
     }
 
     // Combine Image and Text
