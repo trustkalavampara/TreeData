@@ -1,4 +1,4 @@
-/* ==========================================================================#
+/* ==========================================================================
    1. BASE STYLES & LAYOUT
    ========================================================================== */
 * { box-sizing: border-box; }
@@ -80,14 +80,14 @@ body {
     width: max-content;
 }
 
-/* THE VERTICAL SPINE (The Final Handshake) */
+/* THE VERTICAL SPINE (The Continuous Segment) */
 #tree-container ul li::before {
     content: "";
     position: absolute;
     top: -25px; 
     left: -16px; 
     width: 2px;
-    /* THE FIX: 100% of LI height + 64px extension to bridge image gaps */
+    /* THE 64px FIX: Bridges the deep gap when images are visible */
     height: calc(100% + 64px); 
     background: #888;
     z-index: 1;
@@ -97,8 +97,7 @@ body {
 #tree-container li::after {
     content: "";
     position: absolute;
-    /* Centered with the 32px toggle button */
-    top: 24px;   
+    top: 24px;         /* Default center for text-only nodes */
     left: -16px;      
     width: 16px;      
     height: 2px;
@@ -106,11 +105,21 @@ body {
     z-index: 1;
 }
 
-/* THE TAIL CUTTER: Stops the line at the last horizontal branch */
+/* TAIL CUTTER: Stops the line at the last sibling's hook */
 #tree-container ul li:last-child::before {
     top: -25px;
-    /* (25px offset) + (24px hook center) = 49px */
-    height: 49px; 
+    height: 49px;      /* (25px offset) + (24px hook center) */
+}
+
+/* --- IMAGE VISIBLE ADJUSTMENTS --- */
+/* These override the defaults when .hide-images class is NOT present */
+
+#tree-container:not(.hide-images) li::after {
+    top: 40px;         /* Centers hook with 64px image + padding */
+}
+
+#tree-container:not(.hide-images) ul li:last-child::before {
+    height: 65px;      /* (25px offset) + (40px hook center) */
 }
 
 /* ROOT EXCEPTION: No lines for the very first node */
@@ -119,17 +128,18 @@ body {
     display: none !important;
 }
 
+/* ==========================================================================
+   4. NODE ELEMENTS
+   ========================================================================== */
 .tree-row {
     display: flex;
     flex-direction: row;
     align-items: center; 
     gap: 12px;
     position: relative;
+    min-height: 32px; 
 }
 
-/* ==========================================================================
-   4. NODE ELEMENTS
-   ========================================================================== */
 .node-container {
     display: inline-flex !important;
     align-items: center;
