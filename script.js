@@ -61,9 +61,11 @@ function buildTree(nodes) {
     return root;
 }
 
+
 /**
  * 3. RENDER LOGIC
- * Recursively builds the HTML list structure with toggle buttons and images.
+ * Recursively builds the HTML list structure.
+ * Layout: [Toggle] [ [Image] [ID + Content] ]
  */
 function renderTree(node) {
     if (!node) return document.createTextNode("");
@@ -71,7 +73,7 @@ function renderTree(node) {
     const li = document.createElement('li');
     const hasChildren = node.children && node.children.length > 0;
     
-    // Toggle Button ([+] / [-])
+    // 1. Toggle Button ([+] / [-])
     const toggle = document.createElement('span');
     toggle.className = "toggle-btn";
     if (hasChildren) {
@@ -87,34 +89,48 @@ function renderTree(node) {
     }
     li.appendChild(toggle);
 
-    // Node Container (The clickable box)
+    // 2. Node Container (Flexbox Row Layout)
     const nodeWrapper = document.createElement('div');
     nodeWrapper.className = "node-container";
-    nodeWrapper.style.display = "inline-flex";
-    nodeWrapper.style.flexDirection = "column";
-    nodeWrapper.style.alignItems = "flex-start";
-
-    // Build Interior Content
-    let innerHTML = `<div><span class="node-id">[${node.Node_ID}]</span> ${node.Content}</div>`;
     
-    // Image Display Logic
+    // Apply Flexbox styles for Image(Left) and Content(Right)
+    nodeWrapper.style.display = "inline-flex";
+    nodeWrapper.style.flexDirection = "row";
+    nodeWrapper.style.alignItems = "center";
+    nodeWrapper.style.gap = "12px";
+    nodeWrapper.style.padding = "6px 10px";
+    nodeWrapper.style.verticalAlign = "middle";
+
+    // Prepare Image Logic (Fixed 70px Square)
+    let imageHTML = "";
     if (node.Image_URL && node.Image_URL.length > 10 && node.Image_URL !== "null") {
-        innerHTML += `
+        imageHTML = `
             <img src="${node.Image_URL}" 
                  alt="node-img" 
                  class="node-image"
-                 style="max-width: 120px; max-height: 120px; border-radius: 6px; margin-top: 8px; border: 1px solid #ddd; display: block;"
+                 style="width: 70px; height: 70px; object-fit: cover; border-radius: 6px; border: 1px solid #ddd; flex-shrink: 0;"
                  onerror="this.style.display='none'">`;
+    } else {
+        // Placeholder to keep the alignment consistent
+        imageHTML = `<div style="width: 70px; height: 70px; background: #f0f0f0; border-radius: 6px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; color: #ccc; font-size: 10px; border: 1px dashed #ccc;">No Image</div>`;
     }
 
-    nodeWrapper.innerHTML = innerHTML;
+    // Combine Image and Text (Text is wrapped in a column)
+    nodeWrapper.innerHTML = `
+        ${imageHTML}
+        <div style="display: flex; flexDirection: column; text-align: left;">
+            <div style="font-size: 0.75rem; color: #777; font-weight: bold; margin-bottom: 2px;">[${node.Node_ID}]</div>
+            <div style="font-size: 0.95rem; color: #333; line-height: 1.2;">${node.Content}</div>
+        </div>
+    `;
+    
     nodeWrapper.onclick = (e) => {
         e.stopPropagation();
         selectNode(node.Node_ID, nodeWrapper);
     };
     li.appendChild(nodeWrapper);
 
-    // Recursive Children Rendering
+    // 3. Recursive Children Rendering
     if (hasChildren) {
         const ul = document.createElement('ul');
         node.children.forEach(child => {
@@ -124,6 +140,7 @@ function renderTree(node) {
     }
     return li;
 }
+
 
 /**
  * 4. FORM SUBMISSION
