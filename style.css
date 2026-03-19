@@ -135,7 +135,8 @@ body {
     display: flex;
     flex-direction: row;
     align-items: center; 
-    gap: 12px;
+    /* Reduced from 12px to 6px for a tighter look */
+    gap: 6px; 
     position: relative;
     min-height: 32px; 
 }
@@ -143,7 +144,8 @@ body {
 .node-container {
     display: inline-flex !important;
     align-items: center;
-    gap: 12px;
+/* This is the internal gap between image and text */
+    gap: 8px; 
     padding: 8px 12px;
     border: 1px solid #ddd;
     border-radius: 8px;
