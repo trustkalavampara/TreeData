@@ -229,16 +229,33 @@ async function addNode() {
         });
         const result = await response.json();
 
-        if (result.status === "success") {
-            document.getElementById('nodeContent').value = "";
-            document.getElementById('nodePhone').value = "";
-            document.getElementById('nodeDescription').value = "";
-            document.getElementById('nodeImage').value = ""; 
-            document.getElementById('parentId').value = "";
-            document.getElementById('parent-tile-text').innerText = "None Selected";
-            document.getElementById('hierarchy-path').innerText = "Select a node...";
-            fetchTree();
+    if (result.status === "success") {
+        // 1. Clear Input Fields
+        document.getElementById('nodeContent').value = "";
+        document.getElementById('nodePhone').value = "";
+        document.getElementById('nodeDescription').value = "";
+        document.getElementById('nodeImage').value = ""; 
+        document.getElementById('parentId').value = "";
+    
+        // 2. Safely Reset UI Labels (Checks if they exist first)
+        const parentName = document.getElementById('parent-name-preview');
+        if (parentName) parentName.innerText = "None Selected";
+    
+        const arrow = document.getElementById('parent-arrow-svg');
+        if (arrow) arrow.style.opacity = "0";
+    
+        const pathDisplay = document.getElementById('hierarchy-path');
+        if (pathDisplay) {
+            pathDisplay.innerText = "Select a node...";
         } else {
+            console.warn("Element 'hierarchy-path' not found during reset.");
+        }
+    
+        // 3. Refresh the tree view
+        if (typeof fetchTree === "function") fetchTree();
+        
+        alert("Node added successfully!");
+    } else {
             alert("Server Error: " + result.message);
         }
     } catch (err) {
