@@ -230,30 +230,41 @@ async function addNode() {
         const result = await response.json();
 
     if (result.status === "success") {
-        // 1. Clear Input Fields
+        // 1. CLEAR FORM INPUTS
         document.getElementById('nodeContent').value = "";
         document.getElementById('nodePhone').value = "";
         document.getElementById('nodeDescription').value = "";
         document.getElementById('nodeImage').value = ""; 
         document.getElementById('parentId').value = "";
     
-        // 2. Safely Reset UI Labels (Checks if they exist first)
-        const parentName = document.getElementById('parent-name-preview');
-        if (parentName) parentName.innerText = "None Selected";
+        // 2. CLEAR LIVE PREVIEW ELEMENTS
+        const prevImg = document.getElementById('preview-image');
+        if (prevImg) prevImg.src = ""; // Clears the image source
+        
+        const prevName = document.getElementById('preview-name');
+        if (prevName) prevName.innerText = "New Node Name"; // Or "" to leave blank
+        
+        const prevInfo = document.getElementById('preview-info');
+        if (prevInfo) prevInfo.innerText = "";
+        
+        const prevDesc = document.getElementById('preview-description');
+        if (prevDesc) {
+            prevDesc.innerText = "";
+            prevDesc.style.display = "none"; // Hide the description box if it's empty
+        }
     
+        // 3. RESET SELECTION LABELS & ARROW
+        const parentLabel = document.getElementById('parent-name-preview');
+        if (parentLabel) parentLabel.innerText = "None Selected";
+        
         const arrow = document.getElementById('parent-arrow-svg');
         if (arrow) arrow.style.opacity = "0";
     
         const pathDisplay = document.getElementById('hierarchy-path');
-        if (pathDisplay) {
-            pathDisplay.innerText = "Select a node...";
-        } else {
-            console.warn("Element 'hierarchy-path' not found during reset.");
-        }
+        if (pathDisplay) pathDisplay.innerText = "Select a node...";
     
-        // 3. Refresh the tree view
-        if (typeof fetchTree === "function") fetchTree();
-        
+        // 4. REFRESH TREE & NOTIFY
+        fetchTree();
         alert("Node added successfully!");
     } else {
             alert("Server Error: " + result.message);
