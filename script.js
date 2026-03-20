@@ -358,6 +358,11 @@ function updatePreview() {
     const name = document.getElementById('nodeContent').value || "New Node";
     const info = document.getElementById('nodePhone').value || "Info Preview";
     const desc = document.getElementById('nodeDescription').value;
+
+    // 1. CLEAR THE ERROR (Hide the box and reset border)
+    const errorBox = document.getElementById('form-error');
+    if (errorBox) errorBox.style.display = "none";
+    document.getElementById('nodeContent').style.borderColor = "#ccc";
     
     document.getElementById('preview-name').innerText = name;
     document.getElementById('preview-info').innerText = info;
