@@ -262,9 +262,18 @@ li.collapsed > ul { display: none !important; }
     border: 4px solid #007bff;
 }
 
+/* Container for the scrollable part of the modal */
 .modal-body-scroll {
-    max-height: 50vh;
-    overflow-y: auto;
+    max-height: 50vh;           /* Limits height to 50% of the screen height */
+    overflow-y: auto;          /* Adds vertical scrollbar only if needed */
+    padding: 10px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    background: #fafafa;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+    
+    /* Smooth scrolling for mobile */
+    -webkit-overflow-scrolling: touch;
 }
 
 .input-group-vertical {
