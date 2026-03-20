@@ -71,17 +71,31 @@
                         </div>
                     </div>
                     
-                    <div class="input-group-vertical">
-                        <label style="font-weight:bold; margin-top:10px;">Node Image (Optional)</label>
-                        <input type="file" id="nodeImage" accept=".jpg, .jpeg, .png" style="padding:10px 0;" onchange="previewFile()">
-                    </div>
+                <div class="input-group-vertical" style="display: flex; flex-direction: column; gap: 18px;">
+                    <input type="text" id="nodeContent" placeholder="Name" 
+                           style="padding: 14px; border: 1px solid #ccc; border-radius: 8px;" 
+                           oninput="updatePreview()" required>
                     
-                    <div class="input-group-vertical">
-                        <input type="text" id="nodeContent" placeholder="Name" oninput="updatePreview()" required>
-                        <input type="tel" id="nodePhone" placeholder="Additional Info (Optional)" oninput="updatePreview()">
-                        <textarea id="nodeDescription" placeholder="Extra Details... (Optional)" oninput="updatePreview()"></textarea>
-                        <button onclick="addNode()">Add to Tree</button>
+                    <input type="tel" id="nodePhone" placeholder="Additional Info (Optional)" 
+                           style="padding: 14px; border: 1px solid #ccc; border-radius: 8px;" 
+                           oninput="updatePreview()">
+                
+                    <textarea id="nodeDescription" placeholder="Extra Details... (Optional)" 
+                              style="padding: 14px; border: 1px solid #ccc; border-radius: 8px; min-height: 80px;" 
+                              oninput="updatePreview()"></textarea>
+                
+                    <div style="border-top: 1px solid #eee; padding-top: 15px; margin-top: 5px;">
+                        <label style="font-weight: bold; font-size: 0.85rem; color: #666; display: block; margin-bottom: 8px;">
+                            Add an Image? (Optional)
+                        </label>
+                        <input type="file" id="nodeImage" accept=".jpg, .jpeg, .png" 
+                               style="font-size: 0.85rem;" onchange="previewFile()">
                     </div>
+                
+                    <button onclick="addNode()" style="padding: 16px; background-color: #007bff; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">
+                        Add to Tree
+                    </button>
+                </div>
             </div>
     </div>
     <div id="custom-modal" class="modal-overlay" style="display:none;">
