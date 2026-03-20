@@ -308,11 +308,18 @@ function updateLivePath() {
 function updatePreview() {
     const name = document.getElementById('nodeContent').value || "New Node";
     const info = document.getElementById('nodePhone').value || "Info Preview";
+    const desc = document.getElementById('nodeDescription').value;
     
     document.getElementById('preview-name').innerText = name;
     document.getElementById('preview-info').innerText = info;
     
-    // If you have your existing path function, call it too
+    // Update the blue description area
+    const descPreview = document.getElementById('preview-description');
+    descPreview.innerText = desc;
+
+    // Optional: Hide the description div if empty to save space
+    descPreview.style.display = desc ? "block" : "none";
+    
     if (typeof updateLivePath === "function") updateLivePath();
 }
 
