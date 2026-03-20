@@ -296,7 +296,15 @@ function selectNode(id, nodeElement) {
         nodeElement.classList.add('node-active');
     }
 
-    // 3. Find the node data in your global array
+    // 3. RESTORE THE ARROW OPACITY (The fix)
+        const arrow = document.getElementById('parent-arrow-svg');
+        if (arrow) {
+            arrow.style.opacity = "1";
+            // Optional: Add a subtle transition in your CSS for a "fade-in" effect
+             arrow.style.transition = "opacity 0.3s ease"; 
+        }
+
+    // 4. Find the node data in your global array
     const selectedNode = allNodesGlobal.find(n => String(n.Node_ID) === String(id));
     
     if (selectedNode) {
