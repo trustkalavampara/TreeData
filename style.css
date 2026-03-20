@@ -276,6 +276,33 @@ li.collapsed > ul { display: none !important; }
     -webkit-overflow-scrolling: touch;
 }
 
+.modal-path {
+    font-size: 1.4rem;
+    font-weight: bold;
+    color: #333;
+    line-height: 1.5;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    margin: 0; /* Margin handled by the scroll container */
+    text-align: left; /* Easier to read long paths when left-aligned */
+}
+
+/* Ensure the green highlighted span inside the modal also wraps */
+.modal-path span {
+    word-break: break-all;
+}
+
+.modal-details { font-size: 1.1rem; text-align: left; background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 20px; }
+.modal-details p {
+    word-wrap: break-word;
+    white-space: pre-wrap; /* Maintains line breaks in descriptions */
+    margin: 10px 0;
+}
+
+.btn-lg { width: 100%; font-size: 1.4rem; padding: 18px; margin: 5px 0; border-radius: 10px; border: none; font-weight: bold; }
+.btn-confirm { background-color: #28a745; color: white; }
+.btn-cancel { background-color: #dc3545; color: white; }
+
 .input-group-vertical {
     display: flex;
     flex-direction: column;
