@@ -265,12 +265,16 @@ async function addNode() {
     
         // 4. REFRESH TREE & NOTIFY
         fetchTree();
-        alert("Node added successfully!");
+        showToast("Node added successfully!", "success");
     } else {
-            alert("Server Error: " + result.message);
+          showToast("Server Error: " + result.message, "error");
         }
     } catch (err) {
-        alert("Submission failed. Check your Deployment.");
+      // This combines your custom message with the actual technical error
+    showToast(`Submission failed: ${err.message}`, "error");
+    
+    // It's also good practice to keep the console log for deep debugging
+    console.error("Submission Error:", err);
     }
 }
 
@@ -439,3 +443,25 @@ function previewFile() {
         placeholder.style.display = "flex";
     }
 }
+
+
+function showToast(message, type = "success") {
+    const container = document.getElementById('toast-container');
+    if (!container) return; // Safety check
+
+    const toast = document.createElement('div');
+    toast.className = `toast-message toast-${type}`;
+    
+    // Icons based on type
+    const icon = type === "success" ? "✅" : "❌";
+    toast.innerHTML = `<span>${icon}</span><span>${message}</span>`;
+    
+    container.appendChild(toast);
+
+    // Auto-remove logic
+    setTimeout(() => {
+        toast.classList.add('toast-fade-out');
+        setTimeout(() => toast.remove(), 500);
+    }, 4000);
+}
+
