@@ -246,7 +246,8 @@ function selectNode(id, element) {
     
     if (selectedNode) {
         document.getElementById('parentId').value = id;
-        document.getElementById('parent-tile-text').innerText = selectedNode.Content;
+        // Update the new small label in the preview area
+        document.getElementById('parent-name-preview').innerText = name;
         const path = getPath(id);
         document.getElementById('hierarchy-path').innerText = path.join(" > ");
         updateLivePath();
