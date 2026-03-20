@@ -274,6 +274,9 @@ function selectNode(id, nodeElement) {
         if (typeof updateLivePath === "function") updateLivePath();
         if (typeof updatePreview === "function") updatePreview();
 
+                // Optional: Scroll the form into view on mobile
+        document.querySelector('.add-node-form').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
     } else {
         // Safety Reset if something goes wrong
         document.getElementById('parentId').value = "";
