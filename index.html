@@ -91,7 +91,12 @@
                         <input type="file" id="nodeImage" accept=".jpg, .jpeg, .png" 
                                style="font-size: 0.85rem;" onchange="previewFile()">
                     </div>
-                
+
+                        <div id="form-error" style="display: none; color: #dc3545; background: #fff5f5; border: 1px solid #ffcccc; padding: 10px; border-radius: 6px; font-size: 0.85rem; margin-bottom: 10px; align-items: center; gap: 8px;">
+                            <span style="font-weight: bold;">⚠️</span>
+                            <span id="error-text">Please enter a Name.</span>
+                        </div>
+                    
                     <button onclick="addNode()" style="padding: 16px; background-color: #007bff; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">
                         Add to Tree
                     </button>
