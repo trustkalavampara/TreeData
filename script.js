@@ -164,9 +164,27 @@ async function addNode() {
     const phone = document.getElementById('nodePhone').value;
     const description = document.getElementById('nodeDescription').value;
     const fileInput = document.getElementById('nodeImage'); 
+
+    const errorBox = document.getElementById('form-error');
+    const errorText = document.getElementById('error-text');
+
+    // Reset error box
+    errorBox.style.display = "none";
     
-    if (!content) return alert("Please enter a Title.");
-    if (!parentId) return alert("Please select a parent node from the tree first.");
+    // Validation 1: Name Missing
+    if (!content) {
+        errorText.innerText = "Please enter a Name for the node.";
+        errorBox.style.display = "flex";
+        document.getElementById('nodeContent').focus();
+        return;
+    }
+
+    // Validation 2: Parent Not Selected
+    if (!parentId) {
+        errorText.innerText = "Select a node in the tree to add this 'Under'.";
+        errorBox.style.display = "flex";
+        return;
+    }
 
     let base64Image = "";
     if (fileInput.files.length > 0) {
