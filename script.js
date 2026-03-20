@@ -247,7 +247,7 @@ function selectNode(id, element) {
     if (selectedNode) {
         document.getElementById('parentId').value = id;
         // Update the new small label in the preview area
-        document.getElementById('parent-name-preview').innerText = name;
+        document.getElementById('parent-name-preview').innerText = selectedNode.Content;
         const path = getPath(id);
         document.getElementById('hierarchy-path').innerText = path.join(" > ");
         updateLivePath();
