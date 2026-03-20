@@ -30,19 +30,21 @@
                 <h3>Add New Node to:</h3>
                 <div id="hierarchy-path">Select a node...</div>
             
-                <div id="parent-tile" class="parent-tile">
-                    <span id="parent-tile-text">No node selected</span>
-                    <input type="hidden" id="parentId">
-                </div>
-
                     <div style="background: #fdfdfd; padding: 15px; border-radius: 8px; border: 1px dashed #007bff; margin-bottom: 20px;">
-                        <p style="font-size: 0.8rem; color: #007bff; font-weight: bold; margin: 0 0 10px 0; text-transform: uppercase;">Preview</p>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                            <p style="font-size: 0.8rem; color: #007bff; font-weight: bold; margin: 0; text-transform: uppercase;">Preview</p>
+                            <span id="parent-display" style="font-size: 0.75rem; background: #eef6ff; color: #0056b3; padding: 2px 8px; border-radius: 4px; border: 1px solid #d0e3ff;">
+                                Parent: <span id="parent-name-preview">None Selected</span>
+                            </span>
+                        </div>
+                    
+                        <input type="hidden" id="parentId">
+                    
                         <div class="tree-row" id="preview-row" style="pointer-events: none;">
                             <div class="toggle-btn">+</div>
                             <div class="node-container" style="max-width: 400px; height: auto; min-width: 150px;">
                                 <div class="node-placeholder" id="preview-image-box">?</div>
                                 <img id="preview-image" class="node-image" src="" style="display:none;">
-                                
                                 <div class="node-content" style="display: flex; flex-direction: column; white-space: normal; word-break: break-word;">
                                     <div style="font-size: 14px; font-weight: bold;" id="preview-name">New Node</div>
                                     <div style="font-size: 11px; color: #666;" id="preview-info">Info Preview</div>
