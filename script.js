@@ -272,6 +272,11 @@ function selectNode(id, nodeElement) {
     const selectedNode = allNodesGlobal.find(n => String(n.Node_ID) === String(id));
     
     if (selectedNode) {
+
+        // 1. IMMEDIATELY HIDE THE PARENT ERROR
+        const errorBox = document.getElementById('form-error');
+        if (errorBox) errorBox.style.display = "none";
+        
         // Update hidden ID for the addNode() payload
         document.getElementById('parentId').value = id;
         
