@@ -340,3 +340,56 @@ button:active { filter: brightness(0.8); }
     .global-controls { position: static; background: transparent; }
     .btn-secondary { flex: 0 1 auto; width: auto; }
 }
+
+/* --- Toast Notification System --- */
+#toast-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.toast-message {
+    min-width: 280px;
+    padding: 14px 20px;
+    border-radius: 8px;
+    color: white;
+    font-size: 0.9rem;
+    font-weight: 500;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    animation: toastSlideIn 0.4s ease-out forwards;
+}
+
+/* Colors & Borders */
+.toast-success { 
+    background-color: #10b981; /* Modern Green */
+    border-left: 6px solid #059669; 
+}
+
+.toast-error { 
+    background-color: #ef4444; /* Modern Red */
+    border-left: 6px solid #dc2626; 
+}
+
+/* Animations */
+@keyframes toastSlideIn {
+    from { transform: translateX(110%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+.toast-fade-out {
+    opacity: 0 !important;
+    transform: translateX(50px) !important;
+}
+
+/* --- SVG Arrow Smoothness --- */
+#parent-arrow-svg {
+    transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+}
