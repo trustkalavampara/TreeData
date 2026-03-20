@@ -35,31 +35,34 @@
                     <input type="hidden" id="parentId">
                 </div>
 
-                <div style="background: #fdfdfd; padding: 15px; border-radius: 8px; border: 1px dashed #007bff; margin-bottom: 20px;">
-                    <p style="font-size: 0.8rem; color: #007bff; font-weight: bold; margin: 0 0 10px 0; text-transform: uppercase;">Preview</p>
-                    <div class="tree-row" id="preview-row" style="pointer-events: none;">
-                        <div class="toggle-btn">+</div>
-                        <div class="node-container">
-                            <div class="node-placeholder" id="preview-image-box">?</div>
-                            <img id="preview-image" class="node-image" src="" style="display:none;">
-                            <div class="node-content">
-                                <div style="font-size: 14px; font-weight: bold;" id="preview-name">New Node</div>
-                                <div style="font-size: 11px; color: #666;" id="preview-info">Info Preview</div>
+                    <div style="background: #fdfdfd; padding: 15px; border-radius: 8px; border: 1px dashed #007bff; margin-bottom: 20px;">
+                        <p style="font-size: 0.8rem; color: #007bff; font-weight: bold; margin: 0 0 10px 0; text-transform: uppercase;">Preview</p>
+                        <div class="tree-row" id="preview-row" style="pointer-events: none;">
+                            <div class="toggle-btn">+</div>
+                            <div class="node-container" style="max-width: 400px; height: auto; min-width: 150px;">
+                                <div class="node-placeholder" id="preview-image-box">?</div>
+                                <img id="preview-image" class="node-image" src="" style="display:none;">
+                                
+                                <div class="node-content" style="display: flex; flex-direction: column; white-space: normal; word-break: break-word;">
+                                    <div style="font-size: 14px; font-weight: bold;" id="preview-name">New Node</div>
+                                    <div style="font-size: 11px; color: #666;" id="preview-info">Info Preview</div>
+                                    <div style="font-size: 11px; color: #007bff; margin-top: 4px; font-style: italic;" id="preview-description"></div>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="input-group-vertical">
-                    <label style="font-weight:bold; margin-top:10px;">Node Image (Optional)</label>
-                    <input type="file" id="nodeImage" accept=".jpg, .jpeg, .png" style="padding:10px 0;" onchange="previewFile()">
-                </div>
-                
-                <div class="input-group-vertical">
-                    <input type="text" id="nodeContent" placeholder="Name" oninput="updatePreview()" required>
-                    <input type="tel" id="nodePhone" placeholder="Additional Info (Optional)" oninput="updatePreview()">
-                    <textarea id="nodeDescription" placeholder="Extra Details... (Optional)"></textarea>
-                    <button onclick="addNode()">Add to Tree</button>
-                </div>
+                    
+                    <div class="input-group-vertical">
+                        <label style="font-weight:bold; margin-top:10px;">Node Image (Optional)</label>
+                        <input type="file" id="nodeImage" accept=".jpg, .jpeg, .png" style="padding:10px 0;" onchange="previewFile()">
+                    </div>
+                    
+                    <div class="input-group-vertical">
+                        <input type="text" id="nodeContent" placeholder="Name" oninput="updatePreview()" required>
+                        <input type="tel" id="nodePhone" placeholder="Additional Info (Optional)" oninput="updatePreview()">
+                        <textarea id="nodeDescription" placeholder="Extra Details... (Optional)" oninput="updatePreview()"></textarea>
+                        <button onclick="addNode()">Add to Tree</button>
+                    </div>
             </div>
     </div>
     <div id="custom-modal" class="modal-overlay" style="display:none;">
