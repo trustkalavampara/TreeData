@@ -238,19 +238,46 @@ const toBase64 = file => new Promise((resolve, reject) => {
     reader.onerror = error => reject(error);
 });
 
-function selectNode(id, element) {
-    document.querySelectorAll('.node-container').forEach(el => el.classList.remove('node-active'));
-    element.classList.add('node-active');
+function selectNode(id, nodeElement) {
+    // 1. Clear previous selection styles
+    document.querySelectorAll('.node-container').forEach(el => {
+        el.classList.remove('node-active');
+    });
 
+    // 2. Highlight the newly clicked node
+    // Check if nodeElement exists to prevent errors if called programmatically
+    if (nodeElement) {
+        nodeElement.classList.add('node-active');
+    }
+
+    // 3. Find the node data in your global array
     const selectedNode = allNodesGlobal.find(n => String(n.Node_ID) === String(id));
     
     if (selectedNode) {
+        // Update hidden ID for the addNode() payload
         document.getElementById('parentId').value = id;
-        // Update the new small label in the preview area
-        document.getElementById('parent-name-preview').innerText = selectedNode.Content;
-        const path = getPath(id);
-        document.getElementById('hierarchy-path').innerText = path.join(" > ");
-        updateLivePath();
+        
+        // Update the small Parent Label in your Preview Area
+        const parentLabel = document.getElementById('parent-name-preview');
+        if (parentLabel) {
+            parentLabel.innerText = selectedNode.Content;
+        }
+
+        // Update the Hierarchy Breadcrumbs
+        const hierarchyDisplay = document.getElementById('hierarchy-path');
+        if (hierarchyDisplay) {
+            const path = getPath(id);
+            hierarchyDisplay.innerText = path.join(" > ");
+        }
+
+        // Trigger your live path/preview updates
+        if (typeof updateLivePath === "function") updateLivePath();
+        if (typeof updatePreview === "function") updatePreview();
+
+    } else {
+        // Safety Reset if something goes wrong
+        document.getElementById('parentId').value = "";
+        document.getElementById('parent-name-preview').innerText = "None Selected";
     }
 }
 
