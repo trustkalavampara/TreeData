@@ -200,8 +200,8 @@ async function addNode() {
     // Modal Confirmation
     const pathPreview = document.getElementById('hierarchy-path').innerHTML;
     document.getElementById('modal-path-preview').innerHTML = pathPreview;
-    document.getElementById('modal-phone-preview').innerText = phone ? `📞 Phone: ${phone}` : "";
-    document.getElementById('modal-desc-preview').innerText = description ? `📝 Note: ${description}` : "";
+    document.getElementById('modal-phone-preview').innerText = phone ? `ℹ️  ${phone}` : "";
+    document.getElementById('modal-desc-preview').innerText = description ? `📝  ${description}` : "";
     document.querySelector('.modal-details').style.display = (phone || description) ? 'block' : 'none';
 
     const modal = document.getElementById('custom-modal');
