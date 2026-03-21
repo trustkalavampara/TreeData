@@ -5,7 +5,7 @@
 const GAS_URL = "https://script.google.com/macros/s/AKfycbzpGnygs5D7ujnWzSi19R7TZOVrJusPaFsDHvkcd8PCMpUt7PLf2t5GSeUFQyp_pcfsLQ/exec";
 
 // Global storage for the flat node list
-let allNodesGlobal = []; 
+let allNodesGlobal = [];
 
 // Initialize on page load
 window.onload = fetchTree;
@@ -21,18 +21,18 @@ async function fetchTree() {
     try {
         const response = await fetch(GAS_URL);
         const data = await response.json();
-        allNodesGlobal = data; 
-        
+        allNodesGlobal = data;
+
         container.innerHTML = "";
         const treeRoot = buildTree(data);
-        
+
         if (treeRoot) {
             container.appendChild(renderTree(treeRoot));
 
             // This ensures that if the checkbox is "Unchecked", 
             // the new tree we just built immediately hides its images.
             updateImageVisibility();
-            
+
         } else {
             container.innerHTML = "<div style='color:red;'>No root node found. Please check your sheet.</div>";
         }
@@ -74,7 +74,7 @@ function renderTree(node) {
 
     const li = document.createElement('li');
     const hasChildren = node.children && node.children.length > 0;
-    
+
     // --- 1. NEW: The Row Wrapper for Vertical Alignment ---
     const treeRow = document.createElement('div');
     treeRow.className = "tree-row";
@@ -83,7 +83,7 @@ function renderTree(node) {
     const toggle = document.createElement('span');
     toggle.className = "toggle-btn";
     if (hasChildren) {
-        toggle.innerText = "[-] "; 
+        toggle.innerText = "[-] ";
         toggle.onclick = (e) => {
             e.stopPropagation();
             const isCollapsed = li.classList.toggle('collapsed');
@@ -97,7 +97,7 @@ function renderTree(node) {
     // --- 3. Node Container ---
     const nodeWrapper = document.createElement('div');
     nodeWrapper.className = "node-container";
-    
+
     let imageHTML = "";
     if (node.Image_URL && node.Image_URL.length > 10 && node.Image_URL !== "null") {
         imageHTML = `<img src="${node.Image_URL}" referrerpolicy="no-referrer" class="node-image" style="width: 64px; height: 64px; object-fit: cover; border-radius: 4px; border: 1px solid #ddd; flex-shrink: 0;">`;
@@ -112,7 +112,7 @@ function renderTree(node) {
             <div class="node-content" style="font-size: 0.9rem; color: #333; font-weight: 500;">${node.Content}</div>
         </div>
     `;
-    
+
     nodeWrapper.onclick = (e) => {
         e.stopPropagation();
         selectNode(node.Node_ID, nodeWrapper);
@@ -122,7 +122,7 @@ function renderTree(node) {
     // Add Toggle and Node to the Row
     treeRow.appendChild(toggle);
     treeRow.appendChild(nodeWrapper);
-    
+
     // Add Row to the List Item
     li.appendChild(treeRow);
 
@@ -144,7 +144,7 @@ function updateImageVisibility() {
     // 1. Get the checkbox and the tree container
     const checkbox = document.getElementById('imageToggle');
     const container = document.getElementById('tree-container');
-    
+
     if (!checkbox || !container) return;
 
     // 2. Toggle the class based on the checkbox state
@@ -163,14 +163,14 @@ async function addNode() {
     const content = document.getElementById('nodeContent').value.trim();
     const phone = document.getElementById('nodePhone').value;
     const description = document.getElementById('nodeDescription').value;
-    const fileInput = document.getElementById('nodeImage'); 
+    const fileInput = document.getElementById('nodeImage');
 
     const errorBox = document.getElementById('form-error');
     const errorText = document.getElementById('error-text');
 
     // Reset error box
     errorBox.style.display = "none";
-    
+
     // Validation 1: Name Missing
     if (!content) {
         errorText.innerText = "Please enter a Name for the node.";
@@ -214,67 +214,67 @@ async function addNode() {
 
     if (!confirmed) return;
 
-    const payload = { 
-        Parent_ID: parentId, 
-        Content: content, 
-        Phone: phone, 
+    const payload = {
+        Parent_ID: parentId,
+        Content: content,
+        Phone: phone,
         Description: description,
-        Image_Base64: base64Image 
+        Image_Base64: base64Image
     };
 
     try {
-        const response = await fetch(GAS_URL, { 
-            method: 'POST', 
-            body: JSON.stringify(payload) 
+        const response = await fetch(GAS_URL, {
+            method: 'POST',
+            body: JSON.stringify(payload)
         });
         const result = await response.json();
 
-    if (result.status === "success") {
-        // 1. CLEAR FORM INPUTS
-        document.getElementById('nodeContent').value = "";
-        document.getElementById('nodePhone').value = "";
-        document.getElementById('nodeDescription').value = "";
-        document.getElementById('nodeImage').value = ""; 
-        document.getElementById('parentId').value = "";
-    
-        // 2. CLEAR LIVE PREVIEW ELEMENTS
-        const prevImg = document.getElementById('preview-image');
-        if (prevImg) prevImg.src = ""; // Clears the image source
-        
-        const prevName = document.getElementById('preview-name');
-        if (prevName) prevName.innerText = "New Node Name"; // Or "" to leave blank
-        
-        const prevInfo = document.getElementById('preview-info');
-        if (prevInfo) prevInfo.innerText = "";
-        
-        const prevDesc = document.getElementById('preview-description');
-        if (prevDesc) {
-            prevDesc.innerText = "";
-            prevDesc.style.display = "none"; // Hide the description box if it's empty
-        }
-    
-        // 3. RESET SELECTION LABELS & ARROW
-        const parentLabel = document.getElementById('parent-name-preview');
-        if (parentLabel) parentLabel.innerText = "None Selected";
-        
-        const arrow = document.getElementById('parent-arrow-svg');
-        if (arrow) arrow.style.opacity = "0";
-    
-        const pathDisplay = document.getElementById('hierarchy-path');
-        if (pathDisplay) pathDisplay.innerText = "Select a node...";
-    
-        // 4. REFRESH TREE & NOTIFY
-        fetchTree();
-        showToast("Node added successfully!", "success");
-    } else {
-          showToast("Server Error: " + result.message, "error");
+        if (result.status === "success") {
+            // 1. CLEAR FORM INPUTS
+            document.getElementById('nodeContent').value = "";
+            document.getElementById('nodePhone').value = "";
+            document.getElementById('nodeDescription').value = "";
+            document.getElementById('nodeImage').value = "";
+            document.getElementById('parentId').value = "";
+
+            // 2. CLEAR LIVE PREVIEW ELEMENTS
+            const prevImg = document.getElementById('preview-image');
+            if (prevImg) prevImg.src = ""; // Clears the image source
+
+            const prevName = document.getElementById('preview-name');
+            if (prevName) prevName.innerText = "New Node Name"; // Or "" to leave blank
+
+            const prevInfo = document.getElementById('preview-info');
+            if (prevInfo) prevInfo.innerText = "";
+
+            const prevDesc = document.getElementById('preview-description');
+            if (prevDesc) {
+                prevDesc.innerText = "";
+                prevDesc.style.display = "none"; // Hide the description box if it's empty
+            }
+
+            // 3. RESET SELECTION LABELS & ARROW
+            const parentLabel = document.getElementById('parent-name-preview');
+            if (parentLabel) parentLabel.innerText = "None Selected";
+
+            const arrow = document.getElementById('parent-arrow-svg');
+            if (arrow) arrow.style.opacity = "0";
+
+            const pathDisplay = document.getElementById('hierarchy-path');
+            if (pathDisplay) pathDisplay.innerText = "Select a node...";
+
+            // 4. REFRESH TREE & NOTIFY
+            fetchTree();
+            showToast("Node added successfully!", "success");
+        } else {
+            showToast("Server Error: " + result.message, "error");
         }
     } catch (err) {
-      // This combines your custom message with the actual technical error
-    showToast(`Submission failed: ${err.message}`, "error");
-    
-    // It's also good practice to keep the console log for deep debugging
-    console.error("Submission Error:", err);
+        // This combines your custom message with the actual technical error
+        showToast(`Submission failed: ${err.message}`, "error");
+
+        // It's also good practice to keep the console log for deep debugging
+        console.error("Submission Error:", err);
     }
 }
 
@@ -301,25 +301,25 @@ function selectNode(id, nodeElement) {
     }
 
     // 3. RESTORE THE ARROW OPACITY (The fix)
-        const arrow = document.getElementById('parent-arrow-svg');
-        if (arrow) {
-            arrow.style.opacity = "1";
-            // Optional: Add a subtle transition in your CSS for a "fade-in" effect
-             arrow.style.transition = "opacity 0.3s ease"; 
-        }
+    const arrow = document.getElementById('parent-arrow-svg');
+    if (arrow) {
+        arrow.style.opacity = "1";
+        // Optional: Add a subtle transition in your CSS for a "fade-in" effect
+        arrow.style.transition = "opacity 0.3s ease";
+    }
 
     // 4. Find the node data in your global array
     const selectedNode = allNodesGlobal.find(n => String(n.Node_ID) === String(id));
-    
+
     if (selectedNode) {
 
         // 1. IMMEDIATELY HIDE THE PARENT ERROR
         const errorBox = document.getElementById('form-error');
         if (errorBox) errorBox.style.display = "none";
-        
+
         // Update hidden ID for the addNode() payload
         document.getElementById('parentId').value = id;
-        
+
         // Update the small Parent Label in your Preview Area
         const parentLabel = document.getElementById('parent-name-preview');
         if (parentLabel) {
@@ -337,7 +337,32 @@ function selectNode(id, nodeElement) {
         if (typeof updateLivePath === "function") updateLivePath();
         if (typeof updatePreview === "function") updatePreview();
 
-                // Optional: Scroll the form into view on mobile
+        // --- TAB 2 UPDATES (Update Image Logic) ---
+        // 1. Path
+        if (document.getElementById('hierarchy-path-upd')) {
+            document.getElementById('hierarchy-path-upd').innerText = "Target: " + getPath(id).join(" > ");
+        }
+        // 2. Name & Info
+        document.getElementById('preview-name-upd').innerText = selectedNode.Content;
+        document.getElementById('preview-info-upd').innerText = selectedNode.Phone || "";
+        document.getElementById('preview-description-upd').innerText = selectedNode.Description || "";
+
+        // 3. Image Handling for the Preview
+        const imgUpd = document.getElementById('preview-image-upd');
+        const boxUpd = document.getElementById('preview-image-box-upd');
+        
+        if (selectedNode.Image_URL) {
+            imgUpd.src = selectedNode.Image_URL;
+            imgUpd.style.display = "block";
+            boxUpd.style.display = "none";
+        } else {
+            imgUpd.src = "";
+            imgUpd.style.display = "none";
+            boxUpd.style.display = "flex";
+            boxUpd.innerText = "?";
+        }
+
+        // Optional: Scroll the form into view on mobile
         document.querySelector('.add-node-form').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 
     } else {
@@ -399,7 +424,7 @@ function updateLivePath() {
 }
 
 // Updates the Text Preview
-function updatePreview() {
+function    updatePreview() {
     const name = document.getElementById('nodeContent').value || "New Node";
     const info = document.getElementById('nodePhone').value || "Info Preview";
     const desc = document.getElementById('nodeDescription').value;
@@ -408,17 +433,17 @@ function updatePreview() {
     const errorBox = document.getElementById('form-error');
     if (errorBox) errorBox.style.display = "none";
     document.getElementById('nodeContent').style.borderColor = "#ccc";
-    
+
     document.getElementById('preview-name').innerText = name;
     document.getElementById('preview-info').innerText = info;
-    
+
     // Update the blue description area
     const descPreview = document.getElementById('preview-description');
     descPreview.innerText = desc;
 
     // Optional: Hide the description div if empty to save space
     descPreview.style.display = desc ? "block" : "none";
-    
+
     if (typeof updateLivePath === "function") updateLivePath();
 }
 
@@ -444,6 +469,21 @@ function previewFile() {
     }
 }
 
+function previewFileUpdate() {
+    const file = document.getElementById('nodeImage-upd').files[0];
+    const preview = document.getElementById('preview-image-upd');
+    const box = document.getElementById('preview-image-box-upd');
+
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            preview.src = e.target.result;
+            preview.style.display = "block";
+            box.style.display = "none";
+        }
+        reader.readAsDataURL(file);
+    }
+}
 
 function showToast(message, type = "success") {
     const container = document.getElementById('toast-container');
@@ -451,11 +491,11 @@ function showToast(message, type = "success") {
 
     const toast = document.createElement('div');
     toast.className = `toast-message toast-${type}`;
-    
+
     // Icons based on type
     const icon = type === "success" ? "✅" : "❌";
     toast.innerHTML = `<span>${icon}</span><span>${message}</span>`;
-    
+
     container.appendChild(toast);
 
     // Auto-remove logic
@@ -463,5 +503,63 @@ function showToast(message, type = "success") {
         toast.classList.add('toast-fade-out');
         setTimeout(() => toast.remove(), 500);
     }, 4000);
+}
+
+function openTab(evt, tabId) {
+    // 1. Hide all tab content
+    const contents = document.getElementsByClassName("tab-content");
+    for (let content of contents) {
+        content.classList.remove("active");
+    }
+
+    // 2. Remove "active" class from all buttons
+    const buttons = document.getElementsByClassName("tab-btn");
+    for (let btn of buttons) {
+        btn.classList.remove("active");
+    }
+
+    // 3. Show the current tab and add active class to the button
+    document.getElementById(tabId).classList.add("active");
+    evt.currentTarget.classList.add("active");
+}
+
+async function handleImageUpdate() {
+    const targetId = document.getElementById('parentId').value; // Get selected ID
+    const fileInput = document.getElementById('nodeImage-upd');
+    
+    if (!targetId) return showToast("Please select a node from the tree first.", "error");
+    if (fileInput.files.length === 0) return showToast("Please select an image file.", "error");
+
+    const file = fileInput.files[0];
+    if (file.size > 5 * 1024 * 1024) return showToast("File too large (Max 5MB).", "error");
+
+    showToast("Uploading image...", "success"); // Visual feedback
+
+    try {
+        const base64 = await toBase64(file);
+        
+        const payload = {
+            action: "updateImage",
+            Node_ID: targetId,
+            Image_Base64: base64
+        };
+
+        const response = await fetch(GAS_URL, {
+            method: 'POST',
+            body: JSON.stringify(payload)
+        });
+        
+        const result = await response.json();
+
+        if (result.status === "success") {
+            showToast("Image replaced successfully!", "success");
+            fileInput.value = ""; // Clear input
+            fetchTree(); // Refresh tree to show new image
+        } else {
+            showToast("Update failed: " + result.message, "error");
+        }
+    } catch (err) {
+        showToast("Error: " + err.message, "error");
+    }
 }
 
