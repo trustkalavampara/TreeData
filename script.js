@@ -222,7 +222,7 @@ async function addNode() {
         Image_Base64: base64Image
     };
 
-     showToast("Uploading ...", "success"); // Visual feedback
+     showToast("📤 Uploading node data...", "success");
 
     try {
         const response = await fetch(GAS_URL, {
