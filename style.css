@@ -217,9 +217,9 @@ body {
 
 .add-node-form { 
     background: #f1f1f1; 
-    padding: 15px; 
+    padding: 2px; 
     border-radius: 12px; 
-    margin-top: 30px;
+    margin-top: 5px;
 }
 
 .toggle-btn {
@@ -244,7 +244,7 @@ li.collapsed > ul { display: none !important; }
     font-size: 1.1rem;
     font-weight: 800;
     color: #2c3e50;
-    margin-bottom: 15px;
+    margin-bottom: 2px;
     border-left: 5px solid #007bff;
     padding: 5px 12px;
     background: #f8f9fa;
@@ -441,3 +441,18 @@ button:active { filter: brightness(0.8); }
 .tab-content.active {
     display: block;
 }
+
+/* ==========================================================================
+   8. FORM HEADERS
+   ========================================================================== */
+.form-header {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #2c3e50;
+    margin: 0 0 2px 0;
+    border-bottom: 2px solid #eef2f7;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
