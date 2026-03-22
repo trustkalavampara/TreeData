@@ -367,7 +367,14 @@ function selectNode(id, nodeElement) {
         }
 
         // Optional: Scroll the form into view on mobile
-        document.querySelector('.add-node-form').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            const formElement = document.querySelector('.add-node-form');
+
+            if (formElement) {
+                formElement.scrollIntoView({ 
+                    behavior: 'smooth', 
+                    block: 'start' // This ensures the top of the form (the heading) is the anchor
+                });
+            }
 
     } else {
         // Safety Reset if something goes wrong
