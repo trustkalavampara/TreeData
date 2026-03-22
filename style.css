@@ -56,7 +56,7 @@ body {
 #tree-container {
     overflow-x: auto;
     white-space: nowrap;
-    padding: 20px;
+    padding: 10px;
     border: 1px solid #eee;
     background: #fdfdfd;
     min-height: 300px;
@@ -74,7 +74,7 @@ body {
 
 #tree-container li {
     margin: 0;
-    padding: 8px 0; 
+    padding: 2px 0; /* REDUCED: from 8px to 2px for a tighter gap */
     display: block;
     position: relative;
     width: max-content;
@@ -84,12 +84,22 @@ body {
 #tree-container ul li::before {
     content: "";
     position: absolute;
-    top: -25px; 
+    top: -2px; /* ADJUSTED for 2px padding */
     left: -16px; 
     width: 2px;
-    /* THE 64px FIX: Bridges the deep gap when images are visible */
-    height: calc(100% + 64px); 
-    background: #888;
+    height: calc(100% + 10px); 
+    background: #bbbbbb;
+    z-index: 1;
+}
+
+#tree-container:not(.hide-images) ul li::before {
+    content: "";
+    position: absolute;
+    top: -19px; 
+    left: -16px; 
+    width: 2px;
+    height: calc(100% + 14px); 
+    background: #bbbbbb;
     z-index: 1;
 }
 
@@ -97,34 +107,35 @@ body {
 #tree-container li::after {
     content: "";
     position: absolute;
-    top: 24px;         /* Default center for text-only nodes */
+    top: 18px; /* ADJUSTED to center with 32px min-height row */
     left: -16px;      
     width: 16px;      
     height: 2px;
-    background: #888;
+    background: #bbbbbb;
     z-index: 1;
 }
 
 /* TAIL CUTTER: Stops the line at the last sibling's hook */
 #tree-container ul li:last-child::before {
-    top: -25px;
-    height: 49px;      /* (25px offset) + (24px hook center) */
+    top: -1px;
+    height: 21px; /* Precise cut at the horizontal line */
+}
+
+#tree-container:not(.hide-images) ul li:last-child::before {
+    top: -20px;
+    height: 56px; /* Precise cut for image rows */
 }
 
 /* --- IMAGE VISIBLE ADJUSTMENTS --- */
 /* These override the defaults when .hide-images class is NOT present */
 
 #tree-container:not(.hide-images) li::after {
-    top: 40px;         /* Centers hook with 64px image + padding */
-}
-
-#tree-container:not(.hide-images) ul li:last-child::before {
-    height: 65px;      /* (25px offset) + (40px hook center) */
+    top: 36px; /* Centered with 64px image + padding */
 }
 
 /* ROOT EXCEPTION: No lines for the very first node */
-#tree-container > ul > li::before,
-#tree-container > ul > li::after {
+#tree-container > li::before,
+#tree-container > li::after {
     display: none !important;
 }
 
@@ -135,7 +146,7 @@ body {
     display: flex;
     flex-direction: row;
     align-items: center; 
-    /* Reduced from 12px to 6px for a tighter look */
+    margin-bottom: 0px; /* Reduced to zero */
     gap: 0px; 
     position: relative;
     min-height: 32px; 
@@ -144,10 +155,9 @@ body {
 .node-container {
     display: inline-flex !important;
     align-items: center;
-/* This is the internal gap between image and text */
     gap: 8px; 
-    padding: 8px 12px;
-    border: 1px solid #ddd;
+    padding: 2px 4px; /* Tighter padding for a smaller profile */
+    border: 1px solid #bbbbbb;
     border-radius: 8px;
     background: #E0F7FA33;
     cursor: pointer;
@@ -220,7 +230,7 @@ body {
     height: 32px;
     cursor: pointer;
     background: #E0F7FA33;
-    border: 1px solid #ddd;
+    border: 1px solid #bbbbbb;
     border-radius: 4px;
     flex-shrink: 0;
     font-weight: bold;
