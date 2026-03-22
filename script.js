@@ -234,42 +234,10 @@ async function addNode() {
         const result = await response.json();
 
         if (result.status === "success") {
-            // 1. CLEAR FORM INPUTS
-            document.getElementById('nodeContent').value = "";
-            document.getElementById('nodePhone').value = "";
-            document.getElementById('nodeDescription').value = "";
-            document.getElementById('nodeImage').value = "";
-            document.getElementById('parentId').value = "";
-
-            // 2. CLEAR LIVE PREVIEW ELEMENTS
-            const prevImg = document.getElementById('preview-image');
-            if (prevImg) prevImg.src = ""; // Clears the image source
-
-            const prevName = document.getElementById('preview-name');
-            if (prevName) prevName.innerText = "New Node Name"; // Or "" to leave blank
-
-            const prevInfo = document.getElementById('preview-info');
-            if (prevInfo) prevInfo.innerText = "";
-
-            const prevDesc = document.getElementById('preview-description');
-            if (prevDesc) {
-                prevDesc.innerText = "";
-                prevDesc.style.display = "none"; // Hide the description box if it's empty
-            }
-
-            // 3. RESET SELECTION LABELS & ARROW
-            const parentLabel = document.getElementById('parent-name-preview');
-            if (parentLabel) parentLabel.innerText = "None Selected";
-
-            const arrow = document.getElementById('parent-arrow-svg');
-            if (arrow) arrow.style.opacity = "0";
-
-            const pathDisplay = document.getElementById('hierarchy-path');
-            if (pathDisplay) pathDisplay.innerText = "Select a node...";
-
             // 4. REFRESH TREE & NOTIFY
-            fetchTree();
             showToast("Node added successfully!", "success");
+            resetAllForms();
+            fetchTree();
         } else {
             showToast("Server Error: " + result.message, "error");
         }
@@ -384,6 +352,7 @@ function selectNode(id, nodeElement) {
                     behavior: 'smooth'
                 });
             }
+
     } else {
         // Safety Reset if something goes wrong
         document.getElementById('parentId').value = "";
@@ -571,14 +540,86 @@ async function handleImageUpdate() {
         const result = await response.json();
 
         if (result.status === "success") {
-            showToast("Image replaced successfully!", "success");
-            fileInput.value = ""; // Clear input
-            fetchTree(); // Refresh tree to show new image
+            showToast("✅ Image replaced successfully!", "success");
+            // 6. Refresh the Tree UI
+            resetAllForms();
+            fetchTree();
         } else {
             showToast("Update failed: " + result.message, "error");
         }
     } catch (err) {
         showToast("Error: " + err.message, "error");
     }
+}
+
+
+function resetAllForms() {
+    // --- 1. RESET "ADD NODE" FORM & PREVIEW ---
+    const addFields = ['nodeContent', 'nodePhone', 'nodeDescription', 'nodeImage', 'parentId'];
+    addFields.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.value = "";
+    });
+
+    // Add Node Preview Elements
+    const prevImg = document.getElementById('preview-image');
+    if (prevImg) {
+        prevImg.src = "";
+        prevImg.style.display = "none";
+    }
+
+    const prevName = document.getElementById('preview-name');
+    if (prevName) prevName.innerText = "New Node Name";
+
+    const prevInfo = document.getElementById('preview-info');
+    if (prevInfo) prevInfo.innerText = "";
+
+    const prevDesc = document.getElementById('preview-description');
+    if (prevDesc) {
+        prevDesc.innerText = "";
+        prevDesc.style.display = "none";
+    }
+
+    // Add Node Selection UI
+    const parentLabel = document.getElementById('parent-name-preview');
+    if (parentLabel) parentLabel.innerText = "None Selected";
+
+    const arrow = document.getElementById('parent-arrow-svg');
+    if (arrow) arrow.style.opacity = "0";
+
+    const pathDisplay = document.getElementById('hierarchy-path');
+    if (pathDisplay) pathDisplay.innerText = "Select a node...";
+
+
+    // --- 2. RESET "UPDATE IMAGE" SECTION ---
+    const pathUpd = document.getElementById('hierarchy-path-upd');
+    if (pathUpd) pathUpd.innerText = "Select a node to update...";
+
+    const previewImgUpd = document.getElementById('preview-image-upd');
+    const previewBoxUpd = document.getElementById('preview-image-box-upd');
+    if (previewImgUpd) {
+        previewImgUpd.src = "";
+        previewImgUpd.style.display = "none";
+    }
+    if (previewBoxUpd) previewBoxUpd.style.display = "flex";
+
+    const updTexts = {
+        'preview-name-upd': 'Select Node',
+        'preview-info-upd': 'Current Info',
+        'preview-description-upd': ''
+    };
+    for (let id in updTexts) {
+        const el = document.getElementById(id);
+        if (el) el.innerText = updTexts[id];
+    }
+
+    const fileUpd = document.getElementById('nodeImage-upd');
+    if (fileUpd) fileUpd.value = "";
+
+
+    // --- 3. GLOBAL STATE RESET ---
+    selectedNode = null; 
+    
+    console.log("UI and Forms have been fully reset.");
 }
 
