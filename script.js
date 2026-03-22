@@ -368,14 +368,22 @@ function selectNode(id, nodeElement) {
 
         // Optional: Scroll the form into view on mobile
             const formElement = document.querySelector('.add-node-form');
+            const stickyHeader = document.querySelector('.global-controls');
 
             if (formElement) {
-                formElement.scrollIntoView({ 
-                    behavior: 'smooth', 
-                    block: 'start' // This ensures the top of the form (the heading) is the anchor
+                // 1. Get the height of your sticky header (around 70-100px usually)
+                const offset = stickyHeader ? stickyHeader.offsetHeight + 20 : 100;
+
+                // 2. Calculate the position of the form relative to the page
+                const elementPosition = formElement.getBoundingClientRect().top;
+                const offsetPosition = elementPosition + window.pageYOffset - offset;
+
+                // 3. Perform the scroll
+                window.scrollTo({
+                    top: offsetPosition,
+                    behavior: 'smooth'
                 });
             }
-
     } else {
         // Safety Reset if something goes wrong
         document.getElementById('parentId').value = "";
