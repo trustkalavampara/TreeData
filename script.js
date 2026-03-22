@@ -106,12 +106,14 @@ function renderTree(node) {
     }
 
     nodeWrapper.innerHTML = `
-        ${imageHTML}
-        <div style="display: flex; flex-direction: column; text-align: left;">
-            <div class="node-id" style="font-size: 0.7rem; color: #666666; font-weight: bold;">#${node.Node_ID}</div>
-            <div class="node-content" style="font-size: 0.9rem; color: #333; font-weight: 500;">${node.Content}</div>
-        </div>
-    `;
+            ${imageHTML}
+            <div style="display: flex; flex-direction: column; text-align: left;">
+                <div class="node-content" style="font-size: 0.9rem; color: #000000; font-weight: 600;">
+                    <span class="node-id" style="font-size: 0.7rem; color: #838383; font-weight: bold; margin-right: 4px;">#${node.Node_ID}</span>
+                    ${node.Content}
+                </div>
+            </div>
+        `;
 
     nodeWrapper.onclick = (e) => {
         e.stopPropagation();
@@ -222,7 +224,7 @@ async function addNode() {
         Image_Base64: base64Image
     };
 
-     showToast("📤 Uploading node data...", "success");
+    showToast("📤 Uploading node data...", "success");
 
     try {
         const response = await fetch(GAS_URL, {
@@ -352,7 +354,7 @@ function selectNode(id, nodeElement) {
         // 3. Image Handling for the Preview
         const imgUpd = document.getElementById('preview-image-upd');
         const boxUpd = document.getElementById('preview-image-box-upd');
-        
+
         if (selectedNode.Image_URL) {
             imgUpd.src = selectedNode.Image_URL;
             imgUpd.style.display = "block";
@@ -426,7 +428,7 @@ function updateLivePath() {
 }
 
 // Updates the Text Preview
-function    updatePreview() {
+function updatePreview() {
     const name = document.getElementById('nodeContent').value || "New Node";
     const info = document.getElementById('nodePhone').value || "Info Preview";
     const desc = document.getElementById('nodeDescription').value;
@@ -478,7 +480,7 @@ function previewFileUpdate() {
 
     if (file) {
         const reader = new FileReader();
-        reader.onload = function(e) {
+        reader.onload = function (e) {
             preview.src = e.target.result;
             preview.style.display = "block";
             box.style.display = "none";
@@ -528,7 +530,7 @@ function openTab(evt, tabId) {
 async function handleImageUpdate() {
     const targetId = document.getElementById('parentId').value; // Get selected ID
     const fileInput = document.getElementById('nodeImage-upd');
-    
+
     if (!targetId) return showToast("Please select a node from the tree first.", "error");
     if (fileInput.files.length === 0) return showToast("Please select an image file.", "error");
 
@@ -539,7 +541,7 @@ async function handleImageUpdate() {
 
     try {
         const base64 = await toBase64(file);
-        
+
         const payload = {
             action: "updateImage",
             Node_ID: targetId,
@@ -550,7 +552,7 @@ async function handleImageUpdate() {
             method: 'POST',
             body: JSON.stringify(payload)
         });
-        
+
         const result = await response.json();
 
         if (result.status === "success") {
