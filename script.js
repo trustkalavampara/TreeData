@@ -292,6 +292,25 @@ function selectNode(id, nodeElement) {
         // Update hidden ID for the addNode() payload
         document.getElementById('parentId').value = id;
 
+            // Check if the image is locked (supports both 1/0 or true/false)
+            const isLocked = selectedNode.Is_Image_Locked == 1 || selectedNode.Is_Image_Locked === true;
+            const updateTabBtn = document.querySelector('button[onclick*="tab-upload"]');
+
+            if (isLocked) {
+                updateTabBtn.style.opacity = "0.5"; // Visual cue it's disabled
+                updateTabBtn.style.pointerEvents = "none"; // Prevent clicking
+                updateTabBtn.innerHTML = "🔒 Image Locked";
+                
+                // Auto-switch to Add tab if currently on Update
+                if (document.getElementById('tab-upload').classList.contains('active')) {
+                    document.querySelector('button[onclick*="tab-add"]').click();
+                }
+            } else {
+                updateTabBtn.style.opacity = "1";
+                updateTabBtn.style.pointerEvents = "auto";
+                updateTabBtn.innerHTML = "📸 Update Photo";
+            }
+
         // Update the small Parent Label in your Preview Area
         const parentLabel = document.getElementById('parent-name-preview');
         if (parentLabel) {
@@ -526,7 +545,7 @@ async function handleImageUpdate() {
     const file = fileInput.files[0];
     if (file.size > 5 * 1024 * 1024) return showToast("File too large (Max 5MB).", "error");
 
-    showToast("Uploading image...", "success"); // Visual feedback
+    showToast("Uploading Photo...", "success"); // Visual feedback
 
     try {
         const base64 = await toBase64(file);
@@ -545,7 +564,7 @@ async function handleImageUpdate() {
         const result = await response.json();
 
         if (result.status === "success") {
-            showToast("✅ Image replaced successfully!", "success");
+            showToast("✅ Photo replaced successfully!", "success");
             // 6. Refresh the Tree UI
             resetAllForms();
             fetchTree();
