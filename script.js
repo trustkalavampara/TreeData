@@ -335,18 +335,23 @@ function selectNode(id, nodeElement) {
         }
 
         // Optional: Scroll the form into view on mobile
-            const formElement = document.querySelector('.add-node-form');
+            // Inside selectNode(id, nodeElement)
+
+            // 1. Target the common parent container or the tabs header
+            // This ensures scrolling works regardless of which tab is active
+            const formContainer = document.querySelector('.tabs-header') || document.querySelector('.add-node-form');
             const stickyHeader = document.querySelector('.global-controls');
 
-            if (formElement) {
-                // 1. Get the height of your sticky header (around 70-100px usually)
-                const offset = stickyHeader ? stickyHeader.offsetHeight + 20 : 100;
+            if (formContainer) {
+                // 2. Dynamic height calculation
+                const headerHeight = stickyHeader ? stickyHeader.offsetHeight : 80;
+                const offset = headerHeight + 20; // Sticky height + 20px breathing room
 
-                // 2. Calculate the position of the form relative to the page
-                const elementPosition = formElement.getBoundingClientRect().top;
+                // 3. Precise position calculation
+                const elementPosition = formContainer.getBoundingClientRect().top;
                 const offsetPosition = elementPosition + window.pageYOffset - offset;
 
-                // 3. Perform the scroll
+                // 4. Smooth Scroll
                 window.scrollTo({
                     top: offsetPosition,
                     behavior: 'smooth'
