@@ -29,11 +29,13 @@
 
         <hr>
         <div class="tabs-container">
-                <div class="tabs-header">
-                    <button class="tab-btn active" onclick="openTab(event, 'tab-add')">➕ Add New Node</button>
-                    <button class="tab-btn btn-highlight" onclick="openTab(event, 'tab-upload')">📸 Update Photo</button>
-                </div>
-            
+            <div class="tabs-header">
+                <button class="tab-btn active" onclick="openTab(event, 'tab-add')">➕ Add New Node</button>
+                <button class="tab-btn btn-highlight" onclick="openTab(event, 'tab-upload')">
+                    📸 <span id="dynamic-tab-label">Update Photo</span>
+                </button>
+            </div>
+
 
             <div id="tab-add" class="tab-content active">
                 <div class="add-node-form">
@@ -60,8 +62,10 @@
 
                                 <span id="parent-display"
                                     style="font-size: 0.8rem; background: #eef6ff; color: #0056b3; padding: 4px 10px; border-radius: 4px; border: 1px solid #d0e3ff; display: inline-flex; align-items: center;">
-                                    <span id="parent-name-preview" style="font-weight: 600; line-height: 1;">None
-                                        Selected</span>
+                                    <span id="parent-name-preview"
+                                        style="font-size: 1.5rem; font-weight: 700; line-height: 1.2; color: #333;">
+                                        None Selected
+                                    </span>
                                 </span>
 
                             </div>
