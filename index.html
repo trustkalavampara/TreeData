@@ -4,13 +4,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
-    <title>TreeData - Collaborative Mind Map</title>
+    <title>Family Tree</title>
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
     <div class="container">
-        <h1>[TreeData] Collaborative Idea Tree</h1>
+        <h1>Family Tree</h1>
 
         <div class="global-controls">
             <button class="btn-secondary" onclick="fetchTree()">🔄 Refresh Tree</button>
@@ -31,7 +31,7 @@
         <div class="tabs-container">
             <div class="tabs-header">
                 <button class="tab-btn active" onclick="openTab(event, 'tab-add')">➕ Add New Node</button>
-                <button class="tab-btn" onclick="openTab(event, 'tab-upload')">📸 Update Photo</button>
+                <button class="tab-btn btn-highlight" onclick="openTab(event, 'tab-upload')">📸 Update Photo</button>
             </div>
 
             <div id="tab-add" class="tab-content active">
@@ -69,13 +69,17 @@
 
                         <input type="hidden" id="parentId">
 
-                        <div class="tree-row" id="preview-row" style="pointer-events: none;">
+                        <div class="tree-row" id="preview-row" style="margin-bottom: 15px; cursor: pointer;"
+                            onclick="document.getElementById('nodeImage').click();">
+
                             <div class="toggle-btn">+</div>
+
                             <div class="node-container" style="max-width: 400px; height: auto; min-width: 150px;">
                                 <div class="node-placeholder" id="preview-image-box">?</div>
                                 <img id="preview-image" class="node-image" src="" style="display:none;">
+
                                 <div class="node-content"
-                                    style="display: flex; flex-direction: column; white-space: normal; word-break: break-word;">
+                                    style="display: flex; flex-direction: column; white-space: normal; word-break: break-word; pointer-events: none;">
                                     <div style="font-size: 14px; font-weight: bold;" id="preview-name">New Node</div>
                                     <div style="font-size: 11px; color: #666;" id="preview-info">Info Preview</div>
                                     <div style="font-size: 11px; color: #007bff; margin-top: 4px; font-style: italic;"
@@ -128,13 +132,19 @@
                         Select a node to update...
                     </div>
 
-                    <div class="tree-row" id="preview-row-upd" style="pointer-events: none; margin-bottom: 15px;">
+                    <div class="tree-row" id="preview-row-upd" style="margin-bottom: 15px;">
                         <div class="toggle-btn">+</div>
-                        <div class="node-container" style="max-width: 400px; height: auto; min-width: 150px;">
+
+                        <div class="node-container"
+                            style="max-width: 400px; height: auto; min-width: 150px; cursor: pointer;"
+                            onclick="document.getElementById('nodeImage-upd').click();">
+
                             <div class="node-placeholder" id="preview-image-box-upd">?</div>
+
                             <img id="preview-image-upd" class="node-image" src="" style="display:none;">
+
                             <div class="node-content"
-                                style="display: flex; flex-direction: column; white-space: normal; word-break: break-word;">
+                                style="pointer-events: none; display: flex; flex-direction: column; white-space: normal; word-break: break-word;">
                                 <div style="font-size: 14px; font-weight: bold;" id="preview-name-upd">Select Node</div>
                                 <div style="font-size: 11px; color: #666;" id="preview-info-upd">Current Info</div>
                                 <div style="font-size: 11px; color: #007bff; margin-top: 4px; font-style: italic;"
