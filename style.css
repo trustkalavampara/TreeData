@@ -367,8 +367,11 @@ button:active { filter: brightness(0.8); }
     padding: 14px 20px;
     border-radius: 8px;
     color: white;
-    font-size: 0.9rem;
-    font-weight: 500;
+    
+    /* UPDATED: Larger and Bolder */
+    font-size: 1rem; 
+    font-weight: 700; 
+    
     box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
     display: flex;
     align-items: center;
@@ -379,13 +382,13 @@ button:active { filter: brightness(0.8); }
 
 /* Colors & Borders */
 .toast-success { 
-    background-color: #10b981; /* Modern Green */
-    border-left: 6px solid #059669; 
+    background-color: #007850; /* Modern Green */
+    border-left: 6px solid #000000; 
 }
 
 .toast-error { 
-    background-color: #ef4444; /* Modern Red */
-    border-left: 6px solid #dc2626; 
+    background-color: #920000; /* Modern Red */
+    border-left: 6px solid #070000; 
 }
 
 /* Animations */
@@ -410,6 +413,52 @@ button:active { filter: brightness(0.8); }
     display: flex;
     border-bottom: 2px solid #eee;
     margin-bottom: 20px;
+}
+
+
+/* High-attention style for the Update button */
+.btn-highlight {
+    background-color: #28a745 !important; /* Vibrant Green */
+    color: white !important;
+    border: 2px solid #016a14 !important;
+    position: relative;
+    overflow: hidden;
+    animation: pulse-green 2s infinite; /* Continuous attention grabber */
+    font-weight: bold;
+}
+
+/* Optional: Changing the icon color/size slightly */
+.btn-highlight::before {
+    content: '';
+    position: absolute;
+    top: 0; left: -100%;
+    width: 100%; height: 100%;
+    background: linear-gradient(120deg, transparent, rgba(255,255,255,0.3), transparent);
+    transition: all 0.5s;
+}
+
+/* Shimmer effect on hover */
+.btn-highlight:hover::before {
+    left: 100%;
+}
+
+/* The Pulse Animation */
+@keyframes pulse-green {
+    0% {
+        box-shadow: 0 0 0 0 rgba(40, 167, 69, 0.7);
+    }
+    70% {
+        box-shadow: 0 0 0 10px rgba(40, 167, 69, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(40, 167, 69, 0);
+    }
+}
+
+/* Ensure the active state doesn't kill the highlight */
+.tab-btn.btn-highlight.active {
+    background-color: #218838 !important;
+    border-color: #19692c !important;
 }
 
 .tab-btn {
