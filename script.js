@@ -97,7 +97,7 @@ function renderTree(node) {
     const nodeWrapper = document.createElement('div');
     nodeWrapper.className = "node-container";
     nodeWrapper.style.cursor = "pointer";
-    
+
     // Clicking anywhere on the container (except the image) selects the node
     nodeWrapper.onclick = (e) => {
         e.stopPropagation();
@@ -107,20 +107,20 @@ function renderTree(node) {
     // --- 3. Image Section (Contained within Wrapper) ---
     const imageSection = document.createElement('div');
     imageSection.className = "node-image-section";
-    
+
     let imageHTML = "";
     const hasRealImage = node.Image_URL && node.Image_URL.length > 10 && node.Image_URL !== "null";
-    
+
     if (hasRealImage) {
         imageHTML = `<img src="${node.Image_URL}" referrerpolicy="no-referrer" class="node-image" style="width: 64px; height: 64px; object-fit: cover; border-radius: 4px; border: 1px solid #ddd; flex-shrink: 0; cursor: zoom-in;">`;
     } else {
         imageHTML = `<div class="node-placeholder" style="width: 64px; height: 64px; background: #f5f5f5; border-radius: 4px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; color: #ccc; font-size: 10px; border: 1px dashed #ccc; cursor: default;">No Img</div>`;
     }
-    
+
     imageSection.innerHTML = imageHTML;
     imageSection.onclick = (e) => {
         // This is CRITICAL: It stops the click from "bubbling up" to nodeWrapper
-        e.stopPropagation(); 
+        e.stopPropagation();
         if (hasRealImage) {
             showEnlargedImage(node.Image_URL);
         } else {
@@ -132,9 +132,9 @@ function renderTree(node) {
     // --- 4. Details Section (Plain Text) ---
     const detailsSection = document.createElement('div');
     detailsSection.className = "node-details-section";
-    detailsSection.style.cssText = "display: flex; flex-direction: column; text-align: left; flex-grow: 1; padding: 4px 8px; pointer-events: none;"; 
+    detailsSection.style.cssText = "display: flex; flex-direction: column; text-align: left; flex-grow: 1; padding: 4px 8px; pointer-events: none;";
     // pointer-events: none makes the text "click-through" so the parent nodeWrapper handles the click
-    
+
     detailsSection.innerHTML = `
         <div class="node-content" style="font-size: 0.9rem; color: #000000; font-weight: 600;">
             <span class="node-id" style="font-size: 0.7rem; color: #838383; font-weight: bold; margin-right: 4px;">#${node.Node_ID}</span>
@@ -145,7 +145,7 @@ function renderTree(node) {
     // --- 5. Assembly ---
     nodeWrapper.appendChild(imageSection);
     nodeWrapper.appendChild(detailsSection);
-    
+
     treeRow.appendChild(toggle);
     treeRow.appendChild(nodeWrapper);
     li.appendChild(treeRow);
@@ -336,19 +336,48 @@ function selectNode(id, nodeElement) {
         const isLocked = selectedNode.Is_Image_Locked == 1 || selectedNode.Is_Image_Locked === true;
         const updateTabBtn = document.querySelector('button[onclick*="tab-upload"]');
 
-        if (isLocked) {
-            updateTabBtn.style.opacity = "0.5"; // Visual cue it's disabled
-            updateTabBtn.style.pointerEvents = "none"; // Prevent clicking
-            updateTabBtn.innerHTML = "🔒 Image Locked";
+        // --- FIXED LOGIC ---
+        const dynamicTabLabel = document.getElementById('dynamic-tab-label');
 
-            // Auto-switch to Add tab if currently on Update
+        if (dynamicTabLabel) {
+            ``
+            // Truncate text if it's too long to keep the tab size sane
+            const displayName = selectedNode.Content.length > 15
+                ? selectedNode.Content.substring(0, 15) + "..."
+                : selectedNode.Content;
+
+            dynamicTabLabel.innerText = `Update Photo: ${displayName}`;
+        }
+
+        if (isLocked) {
+            updateTabBtn.style.opacity = "0.5";
+            updateTabBtn.style.pointerEvents = "none";
+
+            // Use the label if it exists, otherwise fallback to button
+            if (dynamicTabLabel) {
+                dynamicTabLabel.innerText = "🔒 Image Locked";
+            } else {
+                updateTabBtn.innerText = "🔒 Image Locked";
+            }
+
             if (document.getElementById('tab-upload').classList.contains('active')) {
                 document.querySelector('button[onclick*="tab-add"]').click();
             }
         } else {
             updateTabBtn.style.opacity = "1";
             updateTabBtn.style.pointerEvents = "auto";
-            updateTabBtn.innerHTML = "📸 Update Photo";
+
+            // DO NOT USE innerHTML HERE
+            if (dynamicTabLabel) {
+                // Just reset the text of the span, keeping the icon/span intact
+                const displayName = selectedNode.Content.length > 15
+                    ? selectedNode.Content.substring(0, 15) + "..."
+                    : selectedNode.Content;
+                dynamicTabLabel.innerText = `Update Photo: ${displayName}`;
+            } else {
+                // Fallback if the span is missing for some reason
+                updateTabBtn.innerHTML = `📸 <span id="dynamic-tab-label">Update Photo</span>`;
+            }
         }
 
         // Update the small Parent Label in your Preview Area
@@ -416,6 +445,10 @@ function selectNode(id, nodeElement) {
                 behavior: 'smooth'
             });
         }
+
+        // Update the Dynamic Tab Label
+  
+
 
     } else {
         // Safety Reset if something goes wrong
@@ -658,7 +691,7 @@ function resetAllForms() {
     if (document.getElementById('hierarchy-path')) {
         document.getElementById('hierarchy-path').innerText = "Select a node...";
     }
-    
+
     // Hide any visible Error Messages
     const errorBox = document.getElementById('form-error');
     if (errorBox) errorBox.style.display = "none";
@@ -713,7 +746,7 @@ function resetUpdateTabFile() {
     // 1. Clear the actual file selection (The "Path")
     const fileInput = document.getElementById('nodeImage-upd');
     if (fileInput) {
-        fileInput.value = ""; 
+        fileInput.value = "";
     }
 
     // 2. Reset the Preview to "Empty/Select Node" state
@@ -728,6 +761,6 @@ function resetUpdateTabFile() {
         boxUpd.style.display = "flex";
         boxUpd.innerText = "?";
     }
-    
+
     console.log("Update file input and preview cleared for new selection.");
 }
