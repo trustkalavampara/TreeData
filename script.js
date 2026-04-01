@@ -75,11 +75,10 @@ function renderTree(node) {
     const li = document.createElement('li');
     const hasChildren = node.children && node.children.length > 0;
 
-    // --- 1. NEW: The Row Wrapper for Vertical Alignment ---
     const treeRow = document.createElement('div');
     treeRow.className = "tree-row";
 
-    // --- 2. Toggle Button ---
+    // --- 1. Toggle Button ---
     const toggle = document.createElement('span');
     toggle.className = "toggle-btn";
     if (hasChildren) {
@@ -90,45 +89,67 @@ function renderTree(node) {
             toggle.innerText = isCollapsed ? "[+] " : "[-] ";
         };
     } else {
-        toggle.innerHTML = "&nbsp;&nbsp;"; // Space for leaf nodes
+        toggle.innerHTML = "&nbsp;&nbsp;";
         toggle.style.cursor = "default";
     }
 
-    // --- 3. Node Container ---
+    // --- 2. Node Wrapper (The BROAD Click Area) ---
     const nodeWrapper = document.createElement('div');
     nodeWrapper.className = "node-container";
-
-    let imageHTML = "";
-    if (node.Image_URL && node.Image_URL.length > 10 && node.Image_URL !== "null") {
-        imageHTML = `<img src="${node.Image_URL}" referrerpolicy="no-referrer" class="node-image" style="width: 64px; height: 64px; object-fit: cover; border-radius: 4px; border: 1px solid #ddd; flex-shrink: 0;">`;
-    } else {
-        imageHTML = `<div class="node-placeholder" style="width: 64px; height: 64px; background: #f5f5f5; border-radius: 4px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; color: #ccc; font-size: 10px; border: 1px dashed #ccc;">No Img</div>`;
-    }
-
-    nodeWrapper.innerHTML = `
-            ${imageHTML}
-            <div style="display: flex; flex-direction: column; text-align: left;">
-                <div class="node-content" style="font-size: 0.9rem; color: #000000; font-weight: 600;">
-                    <span class="node-id" style="font-size: 0.7rem; color: #838383; font-weight: bold; margin-right: 4px;">#${node.Node_ID}</span>
-                    ${node.Content}
-                </div>
-            </div>
-        `;
-
+    nodeWrapper.style.cursor = "pointer";
+    
+    // Clicking anywhere on the container (except the image) selects the node
     nodeWrapper.onclick = (e) => {
         e.stopPropagation();
         selectNode(node.Node_ID, nodeWrapper);
     };
 
-    // --- 4. Assembly ---
-    // Add Toggle and Node to the Row
+    // --- 3. Image Section (Contained within Wrapper) ---
+    const imageSection = document.createElement('div');
+    imageSection.className = "node-image-section";
+    
+    let imageHTML = "";
+    const hasRealImage = node.Image_URL && node.Image_URL.length > 10 && node.Image_URL !== "null";
+    
+    if (hasRealImage) {
+        imageHTML = `<img src="${node.Image_URL}" referrerpolicy="no-referrer" class="node-image" style="width: 64px; height: 64px; object-fit: cover; border-radius: 4px; border: 1px solid #ddd; flex-shrink: 0; cursor: zoom-in;">`;
+    } else {
+        imageHTML = `<div class="node-placeholder" style="width: 64px; height: 64px; background: #f5f5f5; border-radius: 4px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; color: #ccc; font-size: 10px; border: 1px dashed #ccc; cursor: default;">No Img</div>`;
+    }
+    
+    imageSection.innerHTML = imageHTML;
+    imageSection.onclick = (e) => {
+        // This is CRITICAL: It stops the click from "bubbling up" to nodeWrapper
+        e.stopPropagation(); 
+        if (hasRealImage) {
+            showEnlargedImage(node.Image_URL);
+        } else {
+            // If there's no image, clicking the placeholder should still select the node
+            selectNode(node.Node_ID, nodeWrapper);
+        }
+    };
+
+    // --- 4. Details Section (Plain Text) ---
+    const detailsSection = document.createElement('div');
+    detailsSection.className = "node-details-section";
+    detailsSection.style.cssText = "display: flex; flex-direction: column; text-align: left; flex-grow: 1; padding: 4px 8px; pointer-events: none;"; 
+    // pointer-events: none makes the text "click-through" so the parent nodeWrapper handles the click
+    
+    detailsSection.innerHTML = `
+        <div class="node-content" style="font-size: 0.9rem; color: #000000; font-weight: 600;">
+            <span class="node-id" style="font-size: 0.7rem; color: #838383; font-weight: bold; margin-right: 4px;">#${node.Node_ID}</span>
+            ${node.Content}
+        </div>
+    `;
+
+    // --- 5. Assembly ---
+    nodeWrapper.appendChild(imageSection);
+    nodeWrapper.appendChild(detailsSection);
+    
     treeRow.appendChild(toggle);
     treeRow.appendChild(nodeWrapper);
-
-    // Add Row to the List Item
     li.appendChild(treeRow);
 
-    // --- 5. Children Logic ---
     if (hasChildren) {
         const ul = document.createElement('ul');
         node.children.forEach(child => ul.appendChild(renderTree(child)));
@@ -136,6 +157,23 @@ function renderTree(node) {
     }
 
     return li;
+}
+
+/**
+ * Helper to show the enlarged image
+ */
+function showEnlargedImage(src) {
+    let overlay = document.getElementById('image-zoom-overlay');
+    if (!overlay) {
+        overlay = document.createElement('div');
+        overlay.id = 'image-zoom-overlay';
+        overlay.style.cssText = "position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:10000; display:none; align-items:center; justify-content:center; cursor:pointer;";
+        overlay.onclick = () => overlay.style.display = 'none';
+        overlay.innerHTML = `<img id="zoomed-img" style="max-width:90%; max-height:90%; border-radius:8px; box-shadow: 0 0 20px rgba(0,0,0,0.5);">`;
+        document.body.appendChild(overlay);
+    }
+    document.getElementById('zoomed-img').src = src;
+    overlay.style.display = 'flex';
 }
 
 /**
@@ -285,6 +323,8 @@ function selectNode(id, nodeElement) {
 
     if (selectedNode) {
 
+        resetUpdateTabFile();
+
         // 1. IMMEDIATELY HIDE THE PARENT ERROR
         const errorBox = document.getElementById('form-error');
         if (errorBox) errorBox.style.display = "none";
@@ -292,24 +332,24 @@ function selectNode(id, nodeElement) {
         // Update hidden ID for the addNode() payload
         document.getElementById('parentId').value = id;
 
-            // Check if the image is locked (supports both 1/0 or true/false)
-            const isLocked = selectedNode.Is_Image_Locked == 1 || selectedNode.Is_Image_Locked === true;
-            const updateTabBtn = document.querySelector('button[onclick*="tab-upload"]');
+        // Check if the image is locked (supports both 1/0 or true/false)
+        const isLocked = selectedNode.Is_Image_Locked == 1 || selectedNode.Is_Image_Locked === true;
+        const updateTabBtn = document.querySelector('button[onclick*="tab-upload"]');
 
-            if (isLocked) {
-                updateTabBtn.style.opacity = "0.5"; // Visual cue it's disabled
-                updateTabBtn.style.pointerEvents = "none"; // Prevent clicking
-                updateTabBtn.innerHTML = "🔒 Image Locked";
-                
-                // Auto-switch to Add tab if currently on Update
-                if (document.getElementById('tab-upload').classList.contains('active')) {
-                    document.querySelector('button[onclick*="tab-add"]').click();
-                }
-            } else {
-                updateTabBtn.style.opacity = "1";
-                updateTabBtn.style.pointerEvents = "auto";
-                updateTabBtn.innerHTML = "📸 Update Photo";
+        if (isLocked) {
+            updateTabBtn.style.opacity = "0.5"; // Visual cue it's disabled
+            updateTabBtn.style.pointerEvents = "none"; // Prevent clicking
+            updateTabBtn.innerHTML = "🔒 Image Locked";
+
+            // Auto-switch to Add tab if currently on Update
+            if (document.getElementById('tab-upload').classList.contains('active')) {
+                document.querySelector('button[onclick*="tab-add"]').click();
             }
+        } else {
+            updateTabBtn.style.opacity = "1";
+            updateTabBtn.style.pointerEvents = "auto";
+            updateTabBtn.innerHTML = "📸 Update Photo";
+        }
 
         // Update the small Parent Label in your Preview Area
         const parentLabel = document.getElementById('parent-name-preview');
@@ -354,28 +394,28 @@ function selectNode(id, nodeElement) {
         }
 
         // Optional: Scroll the form into view on mobile
-            // Inside selectNode(id, nodeElement)
+        // Inside selectNode(id, nodeElement)
 
-            // 1. Target the common parent container or the tabs header
-            // This ensures scrolling works regardless of which tab is active
-            const formContainer = document.querySelector('.tabs-header') || document.querySelector('.add-node-form');
-            const stickyHeader = document.querySelector('.global-controls');
+        // 1. Target the common parent container or the tabs header
+        // This ensures scrolling works regardless of which tab is active
+        const formContainer = document.querySelector('.tabs-header') || document.querySelector('.add-node-form');
+        const stickyHeader = document.querySelector('.global-controls');
 
-            if (formContainer) {
-                // 2. Dynamic height calculation
-                const headerHeight = stickyHeader ? stickyHeader.offsetHeight : 80;
-                const offset = headerHeight + 20; // Sticky height + 20px breathing room
+        if (formContainer) {
+            // 2. Dynamic height calculation
+            const headerHeight = stickyHeader ? stickyHeader.offsetHeight : 80;
+            const offset = headerHeight + 20; // Sticky height + 20px breathing room
 
-                // 3. Precise position calculation
-                const elementPosition = formContainer.getBoundingClientRect().top;
-                const offsetPosition = elementPosition + window.pageYOffset - offset;
+            // 3. Precise position calculation
+            const elementPosition = formContainer.getBoundingClientRect().top;
+            const offsetPosition = elementPosition + window.pageYOffset - offset;
 
-                // 4. Smooth Scroll
-                window.scrollTo({
-                    top: offsetPosition,
-                    behavior: 'smooth'
-                });
-            }
+            // 4. Smooth Scroll
+            window.scrollTo({
+                top: offsetPosition,
+                behavior: 'smooth'
+            });
+        }
 
     } else {
         // Safety Reset if something goes wrong
@@ -576,7 +616,6 @@ async function handleImageUpdate() {
     }
 }
 
-
 function resetAllForms() {
     // --- 1. RESET "ADD NODE" FORM & PREVIEW ---
     const addFields = ['nodeContent', 'nodePhone', 'nodeDescription', 'nodeImage', 'parentId'];
@@ -585,39 +624,50 @@ function resetAllForms() {
         if (el) el.value = "";
     });
 
-    // Add Node Preview Elements
+    // Reset Add Preview Image & Placeholder
     const prevImg = document.getElementById('preview-image');
+    const prevBox = document.getElementById('preview-image-box');
     if (prevImg) {
         prevImg.src = "";
         prevImg.style.display = "none";
     }
-
-    const prevName = document.getElementById('preview-name');
-    if (prevName) prevName.innerText = "New Node Name";
-
-    const prevInfo = document.getElementById('preview-info');
-    if (prevInfo) prevInfo.innerText = "";
-
-    const prevDesc = document.getElementById('preview-description');
-    if (prevDesc) {
-        prevDesc.innerText = "";
-        prevDesc.style.display = "none";
+    if (prevBox) {
+        prevBox.style.display = "flex"; // Show the '?' box again
+        prevBox.innerText = "?";
     }
 
-    // Add Node Selection UI
-    const parentLabel = document.getElementById('parent-name-preview');
-    if (parentLabel) parentLabel.innerText = "None Selected";
+    // Reset Add Preview Text
+    if (document.getElementById('preview-name')) {
+        document.getElementById('preview-name').innerText = "New Node";
+    }
+    if (document.getElementById('preview-info')) {
+        document.getElementById('preview-info').innerText = "Info Preview";
+    }
+    if (document.getElementById('preview-description')) {
+        document.getElementById('preview-description').innerText = "";
+    }
 
+    // Reset Add Node Selection UI
+    if (document.getElementById('parent-name-preview')) {
+        document.getElementById('parent-name-preview').innerText = "None Selected";
+    }
     const arrow = document.getElementById('parent-arrow-svg');
-    if (arrow) arrow.style.opacity = "0";
-
-    const pathDisplay = document.getElementById('hierarchy-path');
-    if (pathDisplay) pathDisplay.innerText = "Select a node...";
+    if (arrow) {
+        arrow.style.opacity = "0"; // Hide the arrow until a node is picked
+    }
+    if (document.getElementById('hierarchy-path')) {
+        document.getElementById('hierarchy-path').innerText = "Select a node...";
+    }
+    
+    // Hide any visible Error Messages
+    const errorBox = document.getElementById('form-error');
+    if (errorBox) errorBox.style.display = "none";
 
 
     // --- 2. RESET "UPDATE IMAGE" SECTION ---
-    const pathUpd = document.getElementById('hierarchy-path-upd');
-    if (pathUpd) pathUpd.innerText = "Select a node to update...";
+    if (document.getElementById('hierarchy-path-upd')) {
+        document.getElementById('hierarchy-path-upd').innerText = "Select a node to update...";
+    }
 
     const previewImgUpd = document.getElementById('preview-image-upd');
     const previewBoxUpd = document.getElementById('preview-image-box-upd');
@@ -625,8 +675,12 @@ function resetAllForms() {
         previewImgUpd.src = "";
         previewImgUpd.style.display = "none";
     }
-    if (previewBoxUpd) previewBoxUpd.style.display = "flex";
+    if (previewBoxUpd) {
+        previewBoxUpd.style.display = "flex"; // Restore the '?' placeholder
+        previewBoxUpd.innerText = "?";
+    }
 
+    // Reset Update Text Labels
     const updTexts = {
         'preview-name-upd': 'Select Node',
         'preview-info-upd': 'Current Info',
@@ -637,13 +691,43 @@ function resetAllForms() {
         if (el) el.innerText = updTexts[id];
     }
 
-    const fileUpd = document.getElementById('nodeImage-upd');
-    if (fileUpd) fileUpd.value = "";
+    if (document.getElementById('nodeImage-upd')) {
+        document.getElementById('nodeImage-upd').value = "";
+    }
 
 
-    // --- 3. GLOBAL STATE RESET ---
-    selectedNode = null; 
-    
-    console.log("UI and Forms have been fully reset.");
+    // --- 3. GLOBAL STATE & STYLE RESET ---
+    // Clear the visual selection (blue highlight) from the tree nodes
+    document.querySelectorAll('.node-container').forEach(el => {
+        el.classList.remove('node-active');
+    });
+
+    // Reset global variable if you use one
+    if (typeof selectedNode !== 'undefined') selectedNode = null;
+
+    console.log("UI and Forms have been fully reset to factory defaults.");
 }
 
+
+function resetUpdateTabFile() {
+    // 1. Clear the actual file selection (The "Path")
+    const fileInput = document.getElementById('nodeImage-upd');
+    if (fileInput) {
+        fileInput.value = ""; 
+    }
+
+    // 2. Reset the Preview to "Empty/Select Node" state
+    const imgUpd = document.getElementById('preview-image-upd');
+    const boxUpd = document.getElementById('preview-image-box-upd');
+
+    if (imgUpd) {
+        imgUpd.src = "";
+        imgUpd.style.display = "none";
+    }
+    if (boxUpd) {
+        boxUpd.style.display = "flex";
+        boxUpd.innerText = "?";
+    }
+    
+    console.log("Update file input and preview cleared for new selection.");
+}
