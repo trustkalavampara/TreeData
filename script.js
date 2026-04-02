@@ -32,7 +32,7 @@ async function fetchTree() {
             // This ensures that if the checkbox is "Unchecked", 
             // the new tree we just built immediately hides its images.
             updateImageVisibility();
-
+                toggleAll(false);
         } else {
             container.innerHTML = "<div style='color:red;'>No root node found. Please check your sheet.</div>";
         }
