@@ -381,10 +381,10 @@ function selectNode(id, nodeElement) {
         }
 
         // Update the small Parent Label in your Preview Area
-        const parentLabel = document.getElementById('parent-name-preview');
+       /* const parentLabel = document.getElementById('parent-name-preview');
         if (parentLabel) {
             parentLabel.innerText = selectedNode.Content;
-        }
+        }  */
 
         // Update the Hierarchy Breadcrumbs
         const hierarchyDisplay = document.getElementById('hierarchy-path');
@@ -453,7 +453,7 @@ function selectNode(id, nodeElement) {
     } else {
         // Safety Reset if something goes wrong
         document.getElementById('parentId').value = "";
-        document.getElementById('parent-name-preview').innerText = "None Selected";
+       // document.getElementById('parent-name-preview').innerText = "None Selected";
     }
 }
 
@@ -681,9 +681,9 @@ function resetAllForms() {
     }
 
     // Reset Add Node Selection UI
-    if (document.getElementById('parent-name-preview')) {
+   /* if (document.getElementById('parent-name-preview')) {
         document.getElementById('parent-name-preview').innerText = "None Selected";
-    }
+    }*/
     const arrow = document.getElementById('parent-arrow-svg');
     if (arrow) {
         arrow.style.opacity = "0"; // Hide the arrow until a node is picked
