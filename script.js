@@ -32,7 +32,7 @@ async function fetchTree() {
             // This ensures that if the checkbox is "Unchecked", 
             // the new tree we just built immediately hides its images.
             updateImageVisibility();
-                toggleAll(false);
+            toggleAll(false);
         } else {
             container.innerHTML = "<div style='color:red;'>No root node found. Please check your sheet.</div>";
         }
@@ -381,10 +381,10 @@ function selectNode(id, nodeElement) {
         }
 
         // Update the small Parent Label in your Preview Area
-       /* const parentLabel = document.getElementById('parent-name-preview');
-        if (parentLabel) {
-            parentLabel.innerText = selectedNode.Content;
-        }  */
+        /* const parentLabel = document.getElementById('parent-name-preview');
+         if (parentLabel) {
+             parentLabel.innerText = selectedNode.Content;
+         }  */
 
         // Update the Hierarchy Breadcrumbs
         const hierarchyDisplay = document.getElementById('hierarchy-path');
@@ -422,38 +422,64 @@ function selectNode(id, nodeElement) {
             boxUpd.innerText = "?";
         }
 
-        // Optional: Scroll the form into view on mobile
-        // Inside selectNode(id, nodeElement)
+        const isProtected = selectedNode.Is_Protected == 1 || selectedNode.Is_Protected === true;
+        const addTabBtn = document.querySelector('button[onclick*="tab-add"]');
+        const addTabContent = document.getElementById('tab-add');
 
-        // 1. Target the common parent container or the tabs header
-        // This ensures scrolling works regardless of which tab is active
-        const formContainer = document.querySelector('.tabs-header') || document.querySelector('.add-node-form');
-        const stickyHeader = document.querySelector('.global-controls');
+        if (isProtected) {
+            // 1. UI Feedback: Disable the "Add" tab
+            addTabBtn.style.opacity = "0.5";
+            addTabBtn.style.pointerEvents = "none";
+            addTabBtn.innerHTML = "🔒 Protected Node";
 
-        if (formContainer) {
-            // 2. Dynamic height calculation
-            const headerHeight = stickyHeader ? stickyHeader.offsetHeight : 80;
-            const offset = headerHeight + 20; // Sticky height + 20px breathing room
+            // 2. Navigation: If user is on "Add", force them to the "Update" tab
+            if (addTabContent.classList.contains('active')) {
+                document.querySelector('button[onclick*="tab-upload"]').click();
+            }
+        } else {
+            // Restore "Add" tab functionality
+            addTabBtn.style.opacity = "1";
+            addTabBtn.style.pointerEvents = "auto";
+            addTabBtn.innerHTML = "➕ Add New Node";
 
-            // 3. Precise position calculation
-            const elementPosition = formContainer.getBoundingClientRect().top;
-            const offsetPosition = elementPosition + window.pageYOffset - offset;
+            // 4. AUTO-SELECT this tab
+            addTabBtn.click();
 
-            // 4. Smooth Scroll
-            window.scrollTo({
-                top: offsetPosition,
-                behavior: 'smooth'
-            });
+            // Optional: Scroll the form into view on mobile
+            // Inside selectNode(id, nodeElement)
+
+            // 1. Target the common parent container or the tabs header
+            // This ensures scrolling works regardless of which tab is active
+            const formContainer = document.querySelector('.tabs-header') || document.querySelector('.add-node-form');
+            const stickyHeader = document.querySelector('.global-controls');
+
+            if (formContainer) {
+                // 2. Dynamic height calculation
+                const headerHeight = stickyHeader ? stickyHeader.offsetHeight : 80;
+                const offset = headerHeight + 20; // Sticky height + 20px breathing room
+
+                // 3. Precise position calculation
+                const elementPosition = formContainer.getBoundingClientRect().top;
+                const offsetPosition = elementPosition + window.pageYOffset - offset;
+
+                // 4. Smooth Scroll
+                window.scrollTo({
+                    top: offsetPosition,
+                    behavior: 'smooth'
+                });
+            }
         }
 
+
+
         // Update the Dynamic Tab Label
-  
+
 
 
     } else {
         // Safety Reset if something goes wrong
         document.getElementById('parentId').value = "";
-       // document.getElementById('parent-name-preview').innerText = "None Selected";
+        // document.getElementById('parent-name-preview').innerText = "None Selected";
     }
 }
 
@@ -681,9 +707,9 @@ function resetAllForms() {
     }
 
     // Reset Add Node Selection UI
-   /* if (document.getElementById('parent-name-preview')) {
-        document.getElementById('parent-name-preview').innerText = "None Selected";
-    }*/
+    /* if (document.getElementById('parent-name-preview')) {
+         document.getElementById('parent-name-preview').innerText = "None Selected";
+     }*/
     const arrow = document.getElementById('parent-arrow-svg');
     if (arrow) {
         arrow.style.opacity = "0"; // Hide the arrow until a node is picked
